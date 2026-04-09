@@ -40,6 +40,29 @@ app.post("/tickets", (req, res) => {
 });
 
 
+app.get("/tickets", (req, res) => {
+  const query = `
+    SELECT 
+      tickets.id,
+      users.name AS user,
+      businesses.name AS business,
+      tickets.message,
+      tickets.status,
+      tickets.created_at
+    FROM tickets
+    JOIN users ON tickets.user_id = users.id
+    JOIN businesses ON tickets.business_id = businesses.id
+    ORDER BY tickets.created_at ASC
+  `;
+
+  db.query(query, (err, results) => {
+    if (err) return res.status(500).json(err);
+
+    res.json(results);
+  });
+});
+
+
 app.listen(3000, () => {
   console.log("Server running on port 3000");
 });
