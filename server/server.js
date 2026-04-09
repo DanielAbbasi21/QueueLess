@@ -24,6 +24,21 @@ app.post("/login", (req, res) => {
   });
 });
 
+app.post("/tickets", (req, res) => {
+  const { user_id, business_id, message } = req.body;
+
+  const query = `
+    INSERT INTO tickets (user_id, business_id, message)
+    VALUES (?, ?, ?)
+  `;
+
+  db.query(query, [user_id, business_id, message], (err, result) => {
+    if (err) return res.status(500).json(err);
+
+    res.json({ success: true });
+  });
+});
+
 
 app.listen(3000, () => {
   console.log("Server running on port 3000");
