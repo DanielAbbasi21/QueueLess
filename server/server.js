@@ -2,6 +2,9 @@ const express = require("express");
 const db = require("./models/db");
 const app = express();
 
+const cors = require("cors");
+app.use(cors());
+
 const ticketRoutes = require("./routes/ticketRoutes");
 
 
