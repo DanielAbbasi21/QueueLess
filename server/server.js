@@ -11,21 +11,21 @@ app.get("/", (req, res) => {
   res.send("QueueLess API is running");
 });
 
-app.post("/login", (req, res) => {
-  const { email, password } = req.body;
+// app.post("/login", (req, res) => {
+//   const { email, password } = req.body;
 
-  const query = "SELECT * FROM users WHERE email = ? AND password = ?";
+//   const query = "SELECT * FROM users WHERE email = ? AND password = ?";
 
-  db.query(query, [email, password], (err, results) => {
-    if (err) return res.status(500).json(err);
+//   db.query(query, [email, password], (err, results) => {
+//     if (err) return res.status(500).json(err);
 
-    if (results.length > 0) {
-      res.json({ success: true, user: results[0] });
-    } else {
-      res.json({ success: false });
-    }
-  });
-});
+//     if (results.length > 0) {
+//       res.json({ success: true, user: results[0] });
+//     } else {
+//       res.json({ success: false });
+//     }
+//   });
+// });
 
 // app.post("/tickets", (req, res) => {
 //   const { user_id, business_id, message } = req.body;
@@ -64,6 +64,10 @@ app.post("/login", (req, res) => {
 //     res.json(results);
 //   });
 // });
+
+
+const authRoutes = require("./routes/authRoutes");
+app.use("/auth", authRoutes);
 
 app.use("/tickets", ticketRoutes);
 
