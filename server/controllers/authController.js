@@ -15,3 +15,18 @@ exports.login = (req, res) => {
     }
   });
 };
+
+exports.register = (req, res) => {
+  const { name, email, password } = req.body;
+
+  const query = `
+    INSERT INTO users (name, email, password)
+    VALUES (?, ?, ?)
+  `;
+
+  db.query(query, [name, email, password], (err, result) => {
+    if (err) return res.status(500).json(err);
+
+    res.json({ success: true });
+  });
+};
