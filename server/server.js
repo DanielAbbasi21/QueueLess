@@ -65,11 +65,13 @@ app.get("/", (req, res) => {
 //   });
 // });
 
+const businessRoutes = require("./routes/businessRoutes");
 
 const authRoutes = require("./routes/authRoutes");
 app.use("/auth", authRoutes);
 
 app.use("/tickets", ticketRoutes);
+app.use("/businesses", businessRoutes);
 
 app.listen(3030, () => {
   console.log("Server running on port 3000");
