@@ -2,6 +2,9 @@ const express = require("express");
 const db = require("./models/db");
 const app = express();
 
+const ticketRoutes = require("./routes/ticketRoutes");
+
+
 app.use(express.json());
 
 app.get("/", (req, res) => {
@@ -24,44 +27,45 @@ app.post("/login", (req, res) => {
   });
 });
 
-app.post("/tickets", (req, res) => {
-  const { user_id, business_id, message } = req.body;
+// app.post("/tickets", (req, res) => {
+//   const { user_id, business_id, message } = req.body;
 
-  const query = `
-    INSERT INTO tickets (user_id, business_id, message)
-    VALUES (?, ?, ?)
-  `;
+//   const query = `
+//     INSERT INTO tickets (user_id, business_id, message)
+//     VALUES (?, ?, ?)
+//   `;
 
-  db.query(query, [user_id, business_id, message], (err, result) => {
-    if (err) return res.status(500).json(err);
+//   db.query(query, [user_id, business_id, message], (err, result) => {
+//     if (err) return res.status(500).json(err);
 
-    res.json({ success: true });
-  });
-});
+//     res.json({ success: true });
+//   });
+// });
 
 
-app.get("/tickets", (req, res) => {
-  const query = `
-    SELECT 
-      tickets.id,
-      users.name AS user,
-      businesses.name AS business,
-      tickets.message,
-      tickets.status,
-      tickets.created_at
-    FROM tickets
-    JOIN users ON tickets.user_id = users.id
-    JOIN businesses ON tickets.business_id = businesses.id
-    ORDER BY tickets.created_at ASC
-  `;
+// app.get("/tickets", (req, res) => {
+//   const query = `
+//     SELECT 
+//       tickets.id,
+//       users.name AS user,
+//       businesses.name AS business,
+//       tickets.message,
+//       tickets.status,
+//       tickets.created_at
+//     FROM tickets
+//     JOIN users ON tickets.user_id = users.id
+//     JOIN businesses ON tickets.business_id = businesses.id
+//     ORDER BY tickets.created_at ASC
+//   `;
 
-  db.query(query, (err, results) => {
-    if (err) return res.status(500).json(err);
+//   db.query(query, (err, results) => {
+//     if (err) return res.status(500).json(err);
 
-    res.json(results);
-  });
-});
+//     res.json(results);
+//   });
+// });
 
+app.use("/tickets", ticketRoutes);
 
 app.listen(3030, () => {
   console.log("Server running on port 3000");
