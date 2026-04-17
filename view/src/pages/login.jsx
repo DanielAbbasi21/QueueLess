@@ -1,8 +1,14 @@
 import { useState } from "react";
+import { login } from "../services/api";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const handleLogin = async () => {
+    const res = await login(email, password);
+    console.log(res);
+  };
 
   return (
     <div>
@@ -26,7 +32,7 @@ function Login() {
 
       <br />
 
-      <button>Login</button>
+      <button onClick={handleLogin}>Login</button>
     </div>
   );
 }
