@@ -4,6 +4,7 @@ import { getBusinesses } from "../services/api";
 function Customer() {
   const [businesses, setBusinesses] = useState([]);
   const [message, setMessage] = useState("");
+  const [selectedBusiness, setSelectedBusiness] = useState("");
 
   const handleLogout = () => {
     localStorage.removeItem("user");
@@ -14,6 +15,17 @@ function Customer() {
     getBusinesses().then(data => setBusinesses(data));
   }, []);
 
+  const handleSubmit = () => {
+    const selected = businesses.find(
+      (b) => b.id === Number(selectedBusiness)
+    );
+
+    console.log("Ticket:", {
+      business: selected?.name,
+      message: message
+    });
+  };
+
   return (
     <div>
       <h2>Customer Page</h2>
@@ -22,8 +34,11 @@ function Customer() {
 
       <br /><br />
 
-      <select>
-        <option>Select a business</option>
+      <select
+        value={selectedBusiness}
+        onChange={(e) => setSelectedBusiness(e.target.value)}
+      >
+        <option value="">Select a business</option>
 
         {businesses.map((b) => (
           <option key={b.id} value={b.id}>
@@ -33,13 +48,18 @@ function Customer() {
       </select>
 
       <br /><br />
-      <div>
+      
         <textarea
           placeholder="What do you need help with?"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
         />
-      </div>
+        <br /><br />
+
+      <button onClick={handleSubmit}>
+        Submit Ticket
+      </button>
+      
     </div>
   );
 }
