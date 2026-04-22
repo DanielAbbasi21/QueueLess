@@ -11,3 +11,8 @@ export const login = async (email, password) => {
 
   return res.json();
 };
+
+export const getBusinesses = async () => {
+  const res = await fetch(`${API}/businesses`);
+  return res.json();
+};
