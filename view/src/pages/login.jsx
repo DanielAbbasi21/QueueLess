@@ -1,13 +1,19 @@
 import { useState } from "react";
 import { login } from "../services/api";
 
-function Login() {
+function Login({ setUser }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleLogin = async () => {
     const res = await login(email, password);
-    console.log(res);
+
+    if (res.success) {
+      localStorage.setItem("user", JSON.stringify(res.user));
+      setUser(res.user);
+    } else {
+      alert("Wrong login");
+    }
   };
 
   return (
