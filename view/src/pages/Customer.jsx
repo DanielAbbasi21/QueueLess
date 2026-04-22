@@ -3,6 +3,7 @@ import { getBusinesses } from "../services/api";
 
 function Customer() {
   const [businesses, setBusinesses] = useState([]);
+  const [message, setMessage] = useState("");
 
   const handleLogout = () => {
     localStorage.removeItem("user");
@@ -30,6 +31,15 @@ function Customer() {
           </option>
         ))}
       </select>
+
+      <br /><br />
+      <div>
+        <textarea
+          placeholder="What do you need help with?"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+        />
+      </div>
     </div>
   );
 }
