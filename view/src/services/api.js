@@ -16,3 +16,15 @@ export const getBusinesses = async () => {
   const res = await fetch(`${API}/businesses`);
   return res.json();
 };
+
+export const createTicket = async (ticket) => {
+  const res = await fetch("http://localhost:3030/tickets", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(ticket),
+  });
+
+  return res.json();
+};

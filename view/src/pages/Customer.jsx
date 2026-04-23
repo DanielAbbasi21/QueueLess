@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getBusinesses } from "../services/api";
+import { getBusinesses, createTicket } from "../services/api";
 
 function Customer() {
   const [businesses, setBusinesses] = useState([]);
@@ -15,15 +15,19 @@ function Customer() {
     getBusinesses().then(data => setBusinesses(data));
   }, []);
 
-  const handleSubmit = () => {
-    const selected = businesses.find(
-      (b) => b.id === Number(selectedBusiness)
-    );
+  const handleSubmit = async () => {
+    const user = JSON.parse(localStorage.getItem("user"));
 
-    console.log("Ticket:", {
-      business: selected?.name,
-      message: message
+    const res = await createTicket({                  
+      user_id: user.id,                               
+      business_id: selectedBusiness,                  
+      message: message,                               
     });
+
+    console.log("Saved:", res);                       
+
+    setMessage("");                                   
+    setSelectedBusiness("");                          
   };
 
   return (
