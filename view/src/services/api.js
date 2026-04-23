@@ -12,6 +12,12 @@ export const login = async (email, password) => {
   return res.json();
 };
 
+export const getTickets = async () => {
+  const res = await fetch("http://localhost:3030/tickets");
+  return res.json();
+};
+
+
 export const getBusinesses = async () => {
   const res = await fetch(`${API}/businesses`);
   return res.json();
