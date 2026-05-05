@@ -24,3 +24,22 @@ exports.getAllTickets = (callback) => {
   `;
   db.query(query, callback);
 };
+
+exports.startTicket = (id, callback) => {
+ const resetQuery = "UPDATE tickets SET status = 'waiting' WHERE status = 'active'";
+ const startQuery = "UPDATE tickets SET status = 'active' WHERE id = ?";
+
+ db.query(resetQuery, () => {
+   db.query(startQuery, [id], callback);
+ });
+};
+
+exports.doneTicket = (id, callback) => {
+  const query = `
+    UPDATE tickets
+    SET status = 'done', completed_at = NOW()
+    WHERE id = ?
+  `;
+
+  db.query(query, [id], callback);
+};
