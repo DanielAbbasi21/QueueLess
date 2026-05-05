@@ -8,6 +8,16 @@ function Admin() {
     getTickets().then(data => setTickets(data));
   }, []);
 
+  const handleStart = (id) => {
+    console.log("Start:", id);
+  };
+
+  const handleDone = (id) => {
+    console.log("Done:", id);
+  };
+
+  
+
   return (
     <div>
       <h2>Admin Panel</h2>
@@ -18,6 +28,15 @@ function Admin() {
           <p><b>Business:</b> {t.business}</p>
           <p><b>Message:</b> {t.message}</p>
           <p><b>Status:</b> {t.status}</p>
+
+          <button onClick={() => handleStart(t.id)}>
+            Start
+          </button>
+
+          <button onClick={() => handleDone(t.id)}>
+            Done
+          </button>
+          
           <hr />
         </div>
       ))}
