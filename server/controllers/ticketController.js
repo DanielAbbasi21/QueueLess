@@ -17,3 +17,26 @@ exports.getTickets = (req, res) => {
     res.json(results);
   });
 };
+
+// START (set active)
+exports.startTicket = (req, res) => {
+  const id = req.params.id;
+
+  ticketModel.startTicket(id, (err) => {
+    if (err) return res.status(500).json(err);
+
+    res.json({ success: true });
+  });
+};
+
+
+// DONE (set done + timestamp)
+exports.doneTicket = (req, res) => {
+  const id = req.params.id;
+
+  ticketModel.doneTicket(id, (err) => {
+    if (err) return res.status(500).json(err);
+
+    res.json({ success: true });
+  });
+};
