@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getTickets } from "../services/api";
+import { getTickets, startTicket, doneTicket } from "../services/api";
 
 function Admin() {
   const [tickets, setTickets] = useState([]);
@@ -8,15 +8,15 @@ function Admin() {
     getTickets().then(data => setTickets(data));
   }, []);
 
-  const handleStart = (id) => {
-    console.log("Start:", id);
+  const handleStart = async (id) => {
+    await startTicket(id);
+    getTickets().then(setTickets);
   };
 
-  const handleDone = (id) => {
-    console.log("Done:", id);
+  const handleDone = async (id) => {
+    await doneTicket(id);
+    getTickets().then(setTickets);
   };
-
-  
 
   return (
     <div>

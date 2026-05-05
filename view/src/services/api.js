@@ -34,3 +34,15 @@ export const createTicket = async (ticket) => {
 
   return res.json();
 };
+
+export const startTicket = async (id) => {
+ await fetch(`http://localhost:3030/tickets/start/${id}`, {
+   method: "PUT",
+ });
+};
+
+export const doneTicket = async (id) => {
+ await fetch(`http://localhost:3030/tickets/done/${id}`, {
+   method: "PUT",
+ });
+};

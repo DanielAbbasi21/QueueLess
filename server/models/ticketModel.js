@@ -27,7 +27,11 @@ exports.getAllTickets = (callback) => {
 
 exports.startTicket = (id, callback) => {
  const resetQuery = "UPDATE tickets SET status = 'waiting' WHERE status = 'active'";
- const startQuery = "UPDATE tickets SET status = 'active' WHERE id = ?";
+ const startQuery = `
+  UPDATE tickets 
+  SET status = 'active' 
+  WHERE id = ? AND status = 'waiting'
+ `;
 
  db.query(resetQuery, () => {
    db.query(startQuery, [id], callback);
