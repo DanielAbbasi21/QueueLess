@@ -18,9 +18,9 @@ exports.getAllTickets = async (business, user) => {
   if (user) {
     filter.user = user;
   }
-  
+
   const tickets = await Ticket.find(filter)
-    .populate("user")
+    .populate("user", "-password")
     .populate("business")
     .sort({ created_at: 1 });
 
@@ -82,10 +82,13 @@ exports.startTicket = async (id) => {
 
   return await Ticket.findByIdAndUpdate(
     id,
-    { status: "active" },
+    { 
+      status: "active",
+      started_at: new Date()
+    },
     { new: true }
   )
-    .populate("user")
+    .populate("user", "-password")
     .populate("business");
 };
 
@@ -111,6 +114,6 @@ exports.doneTicket = async (id) => {
     },
     { new: true }
   )
-    .populate("user")
+    .populate("user", "-password")
     .populate("business");
 };
