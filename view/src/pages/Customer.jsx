@@ -12,22 +12,43 @@ function Customer() {
   };
 
   useEffect(() => {
-    getBusinesses().then(data => setBusinesses(data));
+    getBusinesses().then((data) => setBusinesses(data));
   }, []);
 
   const handleSubmit = async () => {
     const user = JSON.parse(localStorage.getItem("user"));
 
-    const res = await createTicket({                  
-      user_id: user.id,                               
-      business_id: selectedBusiness,                  
-      message: message,                               
+    if (!user) {
+      alert("You must be logged in");
+      return;
+    }
+
+    if (!selectedBusiness) {
+      alert("Please select a business");
+      return;
+    }
+
+    if (!message) {
+      alert("Please write a message");
+      return;
+    }
+
+    const res = await createTicket({
+      user: user._id,
+      business: selectedBusiness,
+      message: message,
     });
 
-    console.log("Saved:", res);                       
+    console.log("Saved:", res);
 
-    setMessage("");                                   
-    setSelectedBusiness("");                          
+    if (res.error) {
+      alert(res.error);
+      return;
+    }
+
+    setMessage("");
+    setSelectedBusiness("");
+    alert("Ticket created");
   };
 
   return (
@@ -45,25 +66,23 @@ function Customer() {
         <option value="">Select a business</option>
 
         {businesses.map((b) => (
-          <option key={b.id} value={b.id}>
+          <option key={b._id} value={b._id}>
             {b.name}
           </option>
         ))}
       </select>
 
       <br /><br />
-      
-        <textarea
-          placeholder="What do you need help with?"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-        />
-        <br /><br />
 
-      <button onClick={handleSubmit}>
-        Submit Ticket
-      </button>
-      
+      <textarea
+        placeholder="What do you need help with?"
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+      />
+
+      <br /><br />
+
+      <button onClick={handleSubmit}>Submit Ticket</button>
     </div>
   );
 }
