@@ -12,10 +12,19 @@ export const login = async (email, password) => {
   return res.json();
 };
 
-export const getTickets = async (businessId = "") => {
-  const url = businessId
-    ? `${API}/tickets?business=${businessId}`
-    : `${API}/tickets`;
+export const getTickets = async ({ businessId = "", userId = "" } = {}) => {
+  const params = new URLSearchParams();
+
+  if (businessId) {
+    params.append("business", businessId);
+  }
+
+  if (userId) {
+    params.append("user", userId);
+  }
+
+  const query = params.toString();
+  const url = query ? `${API}/tickets?${query}` : `${API}/tickets`;
 
   const res = await fetch(url);
   return res.json();
