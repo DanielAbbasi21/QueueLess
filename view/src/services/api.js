@@ -12,19 +12,17 @@ export const login = async (email, password) => {
   return res.json();
 };
 
-export const getTickets = async () => {
-  const res = await fetch("http://localhost:3030/tickets");
-  return res.json();
-};
+export const getTickets = async (businessId = "") => {
+  const url = businessId
+    ? `${API}/tickets?business=${businessId}`
+    : `${API}/tickets`;
 
-
-export const getBusinesses = async () => {
-  const res = await fetch(`${API}/businesses`);
+  const res = await fetch(url);
   return res.json();
 };
 
 export const createTicket = async (ticket) => {
-  const res = await fetch("http://localhost:3030/tickets", {
+  const res = await fetch(`${API}/tickets`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -36,13 +34,22 @@ export const createTicket = async (ticket) => {
 };
 
 export const startTicket = async (id) => {
- await fetch(`http://localhost:3030/tickets/start/${id}`, {
-   method: "PUT",
- });
+  const res = await fetch(`${API}/tickets/start/${id}`, {
+    method: "PUT",
+  });
+
+  return res.json();
 };
 
 export const doneTicket = async (id) => {
- await fetch(`http://localhost:3030/tickets/done/${id}`, {
-   method: "PUT",
- });
+  const res = await fetch(`${API}/tickets/done/${id}`, {
+    method: "PUT",
+  });
+
+  return res.json();
+};
+
+export const getBusinesses = async () => {
+  const res = await fetch(`${API}/businesses`);
+  return res.json();
 };
