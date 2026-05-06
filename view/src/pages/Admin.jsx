@@ -11,10 +11,12 @@ function Admin() {
   const [businesses, setBusinesses] = useState([]);
   const [selectedBusiness, setSelectedBusiness] = useState("");
 
+  
   const fetchTickets = async () => {
-    const data = await getTickets(selectedBusiness);
+    const data = await getTickets({ businessId: selectedBusiness });
     setTickets(data);
   };
+  
 
   const fetchBusinesses = async () => {
     const data = await getBusinesses();

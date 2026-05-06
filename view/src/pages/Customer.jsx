@@ -1,10 +1,20 @@
 import { useEffect, useState } from "react";
-import { getBusinesses, createTicket } from "../services/api";
+import { getBusinesses, createTicket, getTickets } from "../services/api";
 
 function Customer() {
   const [businesses, setBusinesses] = useState([]);
+  const [tickets, setTickets] = useState([]);
   const [message, setMessage] = useState("");
   const [selectedBusiness, setSelectedBusiness] = useState("");
+
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  const fetchMyTickets = async () => {
+    if (!user) return;
+
+    const data = await getTickets({ userId: user._id });
+    setTickets(data);
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("user");
@@ -13,11 +23,10 @@ function Customer() {
 
   useEffect(() => {
     getBusinesses().then((data) => setBusinesses(data));
+    fetchMyTickets();
   }, []);
 
   const handleSubmit = async () => {
-    const user = JSON.parse(localStorage.getItem("user"));
-
     if (!user) {
       alert("You must be logged in");
       return;
@@ -48,6 +57,9 @@ function Customer() {
 
     setMessage("");
     setSelectedBusiness("");
+
+    await fetchMyTickets();
+
     alert("Ticket created");
   };
 
@@ -58,6 +70,8 @@ function Customer() {
       <button onClick={handleLogout}>Logout</button>
 
       <br /><br />
+
+      <h3>Create Ticket</h3>
 
       <select
         value={selectedBusiness}
@@ -83,6 +97,30 @@ function Customer() {
       <br /><br />
 
       <button onClick={handleSubmit}>Submit Ticket</button>
+
+      <hr />
+
+      <h3>My Tickets</h3>
+
+      {tickets.length === 0 && <p>You have no tickets yet.</p>}
+
+      {tickets.map((t) => (
+        <div key={t._id}>
+          <p>
+            <b>Business:</b> {t.business?.name}
+          </p>
+
+          <p>
+            <b>Message:</b> {t.message}
+          </p>
+
+          <p>
+            <b>Status:</b> {t.status}
+          </p>
+
+          <hr />
+        </div>
+      ))}
     </div>
   );
 }
