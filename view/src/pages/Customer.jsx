@@ -10,14 +10,31 @@ function Customer() {
   const user = JSON.parse(localStorage.getItem("user") || "null");
 
   const fetchMyTickets = async () => {
-    if (!user) return;
+  if (!user) return;
 
-    const data = await getTickets({ userId: user._id });
-    setTickets(data);
-  };
+  const data = await getTickets({ userId: user._id });
+
+  if (!Array.isArray(data)) {
+    setTickets([]);
+
+    if (data.message === "Invalid or expired token" || data.message === "No token provided") {
+      localStorage.removeItem("user");
+      localStorage.removeItem("token");
+      alert("Your session has expired. Please log in again.");
+      window.location.reload();
+      return;
+    }
+    alert(data.message || data.error || "Failed to fetch tickets");
+    return;
+  }
+  setTickets(data);
+};
+
+
 
   const handleLogout = () => {
     localStorage.removeItem("user");
+    localStorage.removeItem("token");
     window.location.reload();
   };
 

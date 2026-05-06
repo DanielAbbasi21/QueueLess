@@ -10,9 +10,10 @@ function Login({ setUser }) {
 
     if (res.success) {
       localStorage.setItem("user", JSON.stringify(res.user));
+      localStorage.setItem("token", res.token);
       setUser(res.user);
     } else {
-      alert("Wrong login");
+      alert(res.message || "Wrong login");
     }
   };
 
