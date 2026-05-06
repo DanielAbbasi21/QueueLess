@@ -1,14 +1,29 @@
 import { useEffect, useState } from "react";
-import { getTickets, startTicket, doneTicket } from "../services/api";
+import {
+  getTickets,
+  getBusinesses,
+  startTicket,
+  doneTicket,
+} from "../services/api";
 
 function Admin() {
   const [tickets, setTickets] = useState([]);
+  const [businesses, setBusinesses] = useState([]);
   const [selectedBusiness, setSelectedBusiness] = useState("");
 
   const fetchTickets = async () => {
     const data = await getTickets(selectedBusiness);
     setTickets(data);
   };
+
+  const fetchBusinesses = async () => {
+    const data = await getBusinesses();
+    setBusinesses(data);
+  };
+
+  useEffect(() => {
+    fetchBusinesses();
+  }, []);
 
   useEffect(() => {
     fetchTickets();
@@ -36,15 +51,6 @@ function Admin() {
     fetchTickets();
   };
 
-  const businesses = tickets
-    .map((t) => t.business)
-    .filter((business) => business);
-
-  const uniqueBusinesses = businesses.filter(
-    (business, index, self) =>
-      index === self.findIndex((b) => b._id === business._id)
-  );
-
   return (
     <div>
       <h2>Admin Panel</h2>
@@ -55,7 +61,7 @@ function Admin() {
       >
         <option value="">All businesses</option>
 
-        {uniqueBusinesses.map((b) => (
+        {businesses.map((b) => (
           <option key={b._id} value={b._id}>
             {b.name}
           </option>
