@@ -18,12 +18,43 @@ exports.getAllTickets = async (business, user) => {
   if (user) {
     filter.user = user;
   }
-
-  return await Ticket.find(filter)
+  
+  const tickets = await Ticket.find(filter)
     .populate("user")
     .populate("business")
     .sort({ created_at: 1 });
+
+  const allWaitingTickets = await Ticket.find({ status: "waiting" })
+    .sort({ created_at: 1 });
+
+  return tickets.map((ticket) => {
+    const ticketObject = ticket.toObject();
+
+    if (ticket.status === "active") {
+      ticketObject.queuePosition = 0;
+      return ticketObject;
+    }
+
+    if (ticket.status === "done") {
+      ticketObject.queuePosition = null;
+      return ticketObject;
+    }
+
+    const waitingTicketsForBusiness = allWaitingTickets.filter(
+      (waitingTicket) =>
+        waitingTicket.business.toString() === ticket.business._id.toString()
+    );
+
+    const position = waitingTicketsForBusiness.findIndex(
+      (waitingTicket) => waitingTicket._id.toString() === ticket._id.toString()
+    );
+
+    ticketObject.queuePosition = position + 1;
+
+    return ticketObject;
+  });
 };
+
 
 exports.startTicket = async (id) => {
   const ticket = await Ticket.findById(id);
