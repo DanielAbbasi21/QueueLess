@@ -1,49 +1,81 @@
-const db = require("./db");
+const Ticket = require("./Ticket");
 
-exports.createTicket = (user_id, business_id, message, callback) => {
-  const query = `
-    INSERT INTO tickets (user_id, business_id, message)
-    VALUES (?, ?, ?)
-  `;
-  db.query(query, [user_id, business_id, message], callback);
+exports.createTicket = async (user, business, message) => {
+  return await Ticket.create({
+    user,
+    business,
+    message,
+  });
 };
 
-exports.getAllTickets = (callback) => {
-  const query = `
-    SELECT 
-      tickets.id,
-      users.name AS user,
-      businesses.name AS business,
-      tickets.message,
-      tickets.status,
-      tickets.created_at
-    FROM tickets
-    JOIN users ON tickets.user_id = users.id
-    JOIN businesses ON tickets.business_id = businesses.id
-    ORDER BY tickets.created_at ASC
-  `;
-  db.query(query, callback);
+exports.getAllTickets = async (business) => {
+  const filter = {};
+
+  if (business) {
+    filter.business = business;
+  }
+
+  return await Ticket.find(filter)
+    .populate("user")
+    .populate("business")
+    .sort({ created_at: 1 });
 };
 
-exports.startTicket = (id, callback) => {
- const resetQuery = "UPDATE tickets SET status = 'waiting' WHERE status = 'active'";
- const startQuery = `
-  UPDATE tickets 
-  SET status = 'active' 
-  WHERE id = ? AND status = 'waiting'
- `;
+exports.startTicket = async (id) => {
+  const ticket = await Ticket.findById(id);
 
- db.query(resetQuery, () => {
-   db.query(startQuery, [id], callback);
- });
+  if (!ticket) {
+    return null;
+  }
+
+  if (ticket.status !== "waiting") {
+    return {
+      error: true,
+      message: "Only waiting tickets can be started",
+    };
+  }
+
+  await Ticket.updateMany(
+    {
+      business: ticket.business,
+      status: "active",
+    },
+    {
+      status: "waiting",
+    }
+  );
+
+  return await Ticket.findByIdAndUpdate(
+    id,
+    { status: "active" },
+    { new: true }
+  )
+    .populate("user")
+    .populate("business");
 };
 
-exports.doneTicket = (id, callback) => {
-  const query = `
-    UPDATE tickets
-    SET status = 'done', completed_at = NOW()
-    WHERE id = ?
-  `;
+exports.doneTicket = async (id) => {
+  const ticket = await Ticket.findById(id);
 
-  db.query(query, [id], callback);
+  if (!ticket) {
+    return null;
+  }
+
+  if (ticket.status !== "active") {
+    return {
+      error: true,
+      message: "Only active tickets can be completed",
+    };
+  }
+
+  return await Ticket.findByIdAndUpdate(
+    id,
+    {
+      status: "done",
+      completed_at: new Date(),
+    },
+    { new: true }
+  )
+    .populate("user")
+    .populate("business");
 };

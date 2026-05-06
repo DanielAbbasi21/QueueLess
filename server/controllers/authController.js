@@ -1,32 +1,38 @@
-const db = require("../models/db");
+const User = require("../models/User");
 
-exports.login = (req, res) => {
+// LOGIN
+exports.login = async (req, res) => {
   const { email, password } = req.body;
 
-  const query = "SELECT * FROM users WHERE email = ? AND password = ?";
+  try {
+    const user = await User.findOne({ email, password });
 
-  db.query(query, [email, password], (err, results) => {
-    if (err) return res.status(500).json(err);
-
-    if (results.length > 0) {
-      res.json({ success: true, user: results[0] });
+    if (user) {
+      res.json({ success: true, user });
     } else {
       res.json({ success: false });
     }
-  });
+  } catch (err) {
+    res.status(500).json(err);
+  }
 };
 
-exports.register = (req, res) => {
+
+// REGISTER
+exports.register = async (req, res) => {
   const { name, email, password } = req.body;
 
-  const query = `
-    INSERT INTO users (name, email, password)
-    VALUES (?, ?, ?)
-  `;
+  try {
+    const existingUser = await User.findOne({ email });
 
-  db.query(query, [name, email, password], (err, result) => {
-    if (err) return res.status(500).json(err);
+    if (existingUser) {
+      return res.json({ success: false, message: "User already exists" });
+    }
+
+    await User.create({ name, email, password });
 
     res.json({ success: true });
-  });
+  } catch (err) {
+    res.status(500).json(err);
+  }
 };
