@@ -8,11 +8,15 @@ exports.createTicket = async (user, business, message) => {
   });
 };
 
-exports.getAllTickets = async (business) => {
+exports.getAllTickets = async (business, user) => {
   const filter = {};
 
   if (business) {
     filter.business = business;
+  }
+
+  if (user) {
+    filter.user = user;
   }
 
   return await Ticket.find(filter)

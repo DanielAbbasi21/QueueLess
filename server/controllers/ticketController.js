@@ -24,10 +24,10 @@ exports.createTicket = async (req, res) => {
 };
 
 exports.getTickets = async (req, res) => {
-  const { business } = req.query;
+  const { business, user } = req.query;
 
   try {
-    const tickets = await ticketModel.getAllTickets(business);
+    const tickets = await ticketModel.getAllTickets(business, user);
     res.json(tickets);
   } catch (err) {
     res.status(500).json({
