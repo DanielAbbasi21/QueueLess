@@ -1,5 +1,14 @@
 const API = "http://localhost:3030";
 
+const getAuthHeaders = () => {
+  const token = localStorage.getItem("token");
+
+  return {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  };
+};
+
 export const login = async (email, password) => {
   const res = await fetch(`${API}/auth/login`, {
     method: "POST",
@@ -26,16 +35,17 @@ export const getTickets = async ({ businessId = "", userId = "" } = {}) => {
   const query = params.toString();
   const url = query ? `${API}/tickets?${query}` : `${API}/tickets`;
 
-  const res = await fetch(url);
+  const res = await fetch(url, {
+    headers: getAuthHeaders(),
+  });
+
   return res.json();
 };
 
 export const createTicket = async (ticket) => {
   const res = await fetch(`${API}/tickets`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: getAuthHeaders(),
     body: JSON.stringify(ticket),
   });
 
@@ -45,6 +55,7 @@ export const createTicket = async (ticket) => {
 export const startTicket = async (id) => {
   const res = await fetch(`${API}/tickets/start/${id}`, {
     method: "PUT",
+    headers: getAuthHeaders(),
   });
 
   return res.json();
@@ -53,6 +64,7 @@ export const startTicket = async (id) => {
 export const doneTicket = async (id) => {
   const res = await fetch(`${API}/tickets/done/${id}`, {
     method: "PUT",
+    headers: getAuthHeaders(),
   });
 
   return res.json();
