@@ -7,7 +7,7 @@ function Customer() {
   const [message, setMessage] = useState("");
   const [selectedBusiness, setSelectedBusiness] = useState("");
 
-  const user = JSON.parse(localStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user") || "null");
 
   const fetchMyTickets = async () => {
     if (!user) return;
@@ -24,7 +24,7 @@ function Customer() {
   useEffect(() => {
     getBusinesses().then((data) => setBusinesses(data));
     fetchMyTickets();
-  }, []);
+  }, [user]);
 
   const handleSubmit = async () => {
     if (!user) {
@@ -118,7 +118,24 @@ function Customer() {
             <b>Status:</b> {t.status}
           </p>
 
-          <hr />
+          {t.status === "waiting" && (
+            <p>
+              <b>Queue position:</b> {t.queuePosition}
+            </p>
+          )}
+
+          {t.status === "active" && (
+            <p>
+              <b>Queue position:</b> Now serving
+            </p>
+          )}
+
+          {t.status === "done" && (
+            <p>
+              <b>Queue position:</b> Completed
+            </p>
+          )}
+          <hr/>
         </div>
       ))}
     </div>
