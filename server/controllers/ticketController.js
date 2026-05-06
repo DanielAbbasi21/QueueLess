@@ -1,42 +1,80 @@
 const ticketModel = require("../models/ticketModel");
 
-exports.createTicket = (req, res) => {
-  const { user_id, business_id, message } = req.body;
+exports.createTicket = async (req, res) => {
+  const { user, business, message } = req.body;
 
-  ticketModel.createTicket(user_id, business_id, message, (err) => {
-    if (err) return res.status(500).json(err);
+  try {
+    if (!user) {
+      return res.status(400).json({ error: "User is required" });
+    }
 
-    res.json({ success: true });
-  });
+    if (!business) {
+      return res.status(400).json({ error: "Business is required" });
+    }
+
+    const ticket = await ticketModel.createTicket(user, business, message);
+
+    res.status(201).json(ticket);
+  } catch (err) {
+    res.status(500).json({
+      error: "Failed to create ticket",
+      details: err.message,
+    });
+  }
 };
 
-exports.getTickets = (req, res) => {
-  ticketModel.getAllTickets((err, results) => {
-    if (err) return res.status(500).json(err);
+exports.getTickets = async (req, res) => {
+  const { business } = req.query;
 
-    res.json(results);
-  });
+  try {
+    const tickets = await ticketModel.getAllTickets(business);
+    res.json(tickets);
+  } catch (err) {
+    res.status(500).json({
+      error: "Failed to fetch tickets",
+      details: err.message,
+    });
+  }
 };
 
-// START (set active)
-exports.startTicket = (req, res) => {
-  const id = req.params.id;
+exports.startTicket = async (req, res) => {
+  try {
+    const updated = await ticketModel.startTicket(req.params.id);
 
-  ticketModel.startTicket(id, (err) => {
-    if (err) return res.status(500).json(err);
+    if (!updated) {
+      return res.status(404).json({ error: "Ticket not found" });
+    }
 
-    res.json({ success: true });
-  });
+    if (updated.error) {
+      return res.status(400).json({ error: updated.message });
+    }
+
+    res.json(updated);
+  } catch (err) {
+    res.status(500).json({
+      error: "Failed to start ticket",
+      details: err.message,
+    });
+  }
 };
 
+exports.doneTicket = async (req, res) => {
+  try {
+    const updated = await ticketModel.doneTicket(req.params.id);
 
-// DONE (set done + timestamp)
-exports.doneTicket = (req, res) => {
-  const id = req.params.id;
+    if (!updated) {
+      return res.status(404).json({ error: "Ticket not found" });
+    }
 
-  ticketModel.doneTicket(id, (err) => {
-    if (err) return res.status(500).json(err);
+    if (updated.error) {
+      return res.status(400).json({ error: updated.message });
+    }
 
-    res.json({ success: true });
-  });
+    res.json(updated);
+  } catch (err) {
+    res.status(500).json({
+      error: "Failed to complete ticket",
+      details: err.message,
+    });
+  }
 };

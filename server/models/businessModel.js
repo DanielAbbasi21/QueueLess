@@ -1,5 +1,11 @@
-const db = require("./db");
+const Business = require("./Business");
 
-exports.getAllBusinesses = (callback) => {
-  db.query("SELECT * FROM businesses", callback);
+// CREATE
+exports.createBusiness = async (name) => {
+  return await Business.create({ name });
+};
+
+// GET ALL
+exports.getAllBusinesses = async () => {
+  return await Business.find().sort({ name: 1 });
 };
