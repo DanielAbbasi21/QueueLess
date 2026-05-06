@@ -8,6 +8,30 @@ exports.createTicket = async (user, business, message) => {
   });
 };
 
+const getAverageServiceTime = async (businessId) => {
+  const completedTickets = await Ticket.find({
+    business: businessId,
+    status: "done",
+    started_at: { $exists: true },
+    completed_at: { $exists: true },
+  });
+
+  if (completedTickets.length === 0) {
+    return 5;
+  }
+
+  const totalMinutes = completedTickets.reduce((sum, ticket) => {
+    const started = new Date(ticket.started_at);
+    const completed = new Date(ticket.completed_at);
+
+    const diffMinutes = (completed - started) / 1000 / 60;
+
+    return sum + diffMinutes;
+  }, 0);
+
+  return Math.ceil(totalMinutes / completedTickets.length);
+};
+
 exports.getAllTickets = async (business, user) => {
   const filter = {};
 
@@ -27,32 +51,40 @@ exports.getAllTickets = async (business, user) => {
   const allWaitingTickets = await Ticket.find({ status: "waiting" })
     .sort({ created_at: 1 });
 
-  return tickets.map((ticket) => {
+  return await Promise.all(
+    tickets.map(async (ticket) => {
     const ticketObject = ticket.toObject();
 
-    if (ticket.status === "active") {
-      ticketObject.queuePosition = 0;
+      if (ticket.status === "active") {
+        ticketObject.queuePosition = 0;
+        ticketObject.estimatedWaitTime = 0;
+        return ticketObject;
+      }
+
+      if (ticket.status === "done") {
+        ticketObject.queuePosition = null;
+        ticketObject.estimatedWaitTime = null;
+        return ticketObject;
+      }
+
+      const waitingTicketsForBusiness = allWaitingTickets.filter(
+        (waitingTicket) =>
+          waitingTicket.business.toString() === ticket.business._id.toString()
+      );
+
+      const position = waitingTicketsForBusiness.findIndex(
+        (waitingTicket) => waitingTicket._id.toString() === ticket._id.toString()
+      );
+
+      const queuePosition = position + 1;
+      const averageServiceTime = await getAverageServiceTime(ticket.business._id);
+
+      ticketObject.queuePosition = queuePosition;
+      ticketObject.estimatedWaitTime = queuePosition * averageServiceTime;
+
       return ticketObject;
-    }
-
-    if (ticket.status === "done") {
-      ticketObject.queuePosition = null;
-      return ticketObject;
-    }
-
-    const waitingTicketsForBusiness = allWaitingTickets.filter(
-      (waitingTicket) =>
-        waitingTicket.business.toString() === ticket.business._id.toString()
-    );
-
-    const position = waitingTicketsForBusiness.findIndex(
-      (waitingTicket) => waitingTicket._id.toString() === ticket._id.toString()
-    );
-
-    ticketObject.queuePosition = position + 1;
-
-    return ticketObject;
-  });
+    })
+  );
 };
 
 
