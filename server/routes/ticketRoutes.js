@@ -1,11 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const ticketController = require("../controllers/ticketController");
+const { verifyToken } = require("../middleware/authMiddleware");
 
-router.post("/", ticketController.createTicket);
-router.get("/", ticketController.getTickets);
-router.put("/start/:id", ticketController.startTicket);
-router.put("/done/:id", ticketController.doneTicket);
-
+router.post("/", verifyToken, ticketController.createTicket);
+router.get("/", verifyToken, ticketController.getTickets);
+router.put("/start/:id", verifyToken, ticketController.startTicket);
+router.put("/done/:id", verifyToken, ticketController.doneTicket);
 
 module.exports = router;
