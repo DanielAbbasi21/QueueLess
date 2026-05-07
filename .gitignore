@@ -1,12 +1,12 @@
 # Dependencies
 node_modules/
 server/node_modules/
-view/node_modules/
+client/node_modules/
 
 # Environment variables
 .env
 server/.env
-view/.env
+client/.env
 .env.local
 .env.development.local
 .env.test.local
@@ -19,7 +19,7 @@ coverage/
 # Build outputs
 dist/
 build/
-view/dist/
+client/dist/
 server/dist/
 
 # Logs
