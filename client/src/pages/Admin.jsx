@@ -1,35 +1,34 @@
 import { useEffect, useState } from "react";
 import {
   getTickets,
-  getBusinesses,
   startTicket,
   doneTicket,
 } from "../services/api";
 
 function Admin() {
   const [tickets, setTickets] = useState([]);
-  const [businesses, setBusinesses] = useState([]);
-  const [selectedBusiness, setSelectedBusiness] = useState("");
+
+  const user = JSON.parse(localStorage.getItem("user") || "null");
 
   
   const fetchTickets = async () => {
-    const data = await getTickets({ businessId: selectedBusiness });
+    if (!user?.business) return;
+
+    const data = await getTickets({ businessId: user.business });
+
+    if (!Array.isArray(data)) {
+      setTickets([]);
+      alert(data.message || data.error || "Failed to fetch tickets");
+      return;
+    }
+
     setTickets(data);
   };
   
 
-  const fetchBusinesses = async () => {
-    const data = await getBusinesses();
-    setBusinesses(data);
-  };
-
-  useEffect(() => {
-    fetchBusinesses();
-  }, []);
-
   useEffect(() => {
     fetchTickets();
-  }, [selectedBusiness]);
+  }, []);
 
   const handleStart = async (id) => {
     const res = await startTicket(id);
@@ -53,22 +52,17 @@ function Admin() {
     fetchTickets();
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    window.location.reload();
+  };
+
   return (
     <div>
-      <h2>Admin Panel</h2>
+      <h2>Business dashboard</h2>
+      <button onClick={handleLogout}>Logout</button>
 
-      <select
-        value={selectedBusiness}
-        onChange={(e) => setSelectedBusiness(e.target.value)}
-      >
-        <option value="">All businesses</option>
-
-        {businesses.map((b) => (
-          <option key={b._id} value={b._id}>
-            {b.name}
-          </option>
-        ))}
-      </select>
 
       <br /><br />
 
