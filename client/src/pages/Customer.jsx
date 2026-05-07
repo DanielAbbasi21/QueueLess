@@ -137,7 +137,7 @@ function Customer() {
 
           {t.status === "waiting" && (
             <p>
-              <b>Queue position:</b> {t.queuePosition}
+              <b>Estimated wait:</b> {t.estimatedWaitTime} minutes 
             </p>
           )}
 
