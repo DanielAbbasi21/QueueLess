@@ -8,7 +8,6 @@ function App() {
     JSON.parse(localStorage.getItem("user"))
   );
 
-  const [isAdmin, setIsAdmin] = useState(false);
 
   if (!user) {
     return <Login setUser={setUser} />;
@@ -16,11 +15,13 @@ function App() {
 
   return (
     <div>
-      <button onClick={() => setIsAdmin(!isAdmin)}>
-        Switch to {isAdmin ? "Customer" : "Admin"} View
-      </button>
+      {user.role === "customer" && <Customer />}
 
-      {isAdmin ? <Admin /> : <Customer />}
+      {user.role === "business" && <Admin />}
+
+      {!["customer", "business"].includes(user.role) && (
+        <p>Unknown user role</p>
+      )}
     </div>
   );
 }
