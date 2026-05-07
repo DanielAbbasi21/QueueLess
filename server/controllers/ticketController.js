@@ -1,4 +1,5 @@
 const ticketModel = require("../models/ticketModel");
+const Ticket = require("../models/Ticket");
 
 exports.createTicket = async (req, res) => {
   const { user, business, message } = req.body;
@@ -39,6 +40,23 @@ exports.getTickets = async (req, res) => {
 
 exports.startTicket = async (req, res) => {
   try {
+    if (req.user.role !== "business") {
+      return res.status(403).json({ 
+        error: "Only businesses can start tickets",
+      });
+    }
+
+    const ticket = await Ticket.findById(req.params.id);
+
+    if (!ticket) {
+      return res.status(404).json({ error: "Ticket not found" });
+    }
+    if (ticket.business.toString() !== req.user.business) {
+      return res.status(403).json({ 
+        error: "You can only start tickets for your own business" 
+      });
+    }
+
     const updated = await ticketModel.startTicket(req.params.id);
 
     if (!updated) {
@@ -60,6 +78,23 @@ exports.startTicket = async (req, res) => {
 
 exports.doneTicket = async (req, res) => {
   try {
+    if (req.user.role !== "business") {
+      return res.status(403).json({ 
+        error: "Only businesses can complete tickets",
+      });
+    }
+
+    const ticket = await Ticket.findById(req.params.id);
+
+    if (!ticket) {
+      return res.status(404).json({ error: "Ticket not found" });
+    }
+    if (ticket.business.toString() !== req.user.business) {
+      return res.status(403).json({ 
+        error: "You can only complete tickets for your own business" 
+       });
+    }
+
     const updated = await ticketModel.doneTicket(req.params.id);
 
     if (!updated) {

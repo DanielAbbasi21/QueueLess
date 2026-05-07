@@ -2,15 +2,30 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
-// REGISTER
 exports.register = async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, role, business } = req.body;
 
   try {
     if (!name || !email || !password) {
       return res.status(400).json({
         success: false,
         message: "Name, email and password are required",
+      });
+    }
+
+    const userRole = role || "customer";
+
+    if (!["customer", "business"].includes(userRole)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid role",
+      });
+    }
+
+    if (userRole === "business" && !business) {
+      return res.status(400).json({
+        success: false,
+        message: "Business account requires a business ID",
       });
     }
 
@@ -29,6 +44,8 @@ exports.register = async (req, res) => {
       name,
       email,
       password: hashedPassword,
+      role: userRole,
+      business: userRole === "business" ? business : null,
     });
 
     res.status(201).json({
@@ -37,6 +54,8 @@ exports.register = async (req, res) => {
         _id: user._id,
         name: user.name,
         email: user.email,
+        role: user.role,
+        business: user.business,
       },
     });
   } catch (err) {
@@ -48,7 +67,6 @@ exports.register = async (req, res) => {
   }
 };
 
-// LOGIN
 exports.login = async (req, res) => {
   const { email, password } = req.body;
 
@@ -82,6 +100,8 @@ exports.login = async (req, res) => {
       {
         userId: user._id,
         email: user.email,
+        role: user.role,
+        business: user.business,
       },
       process.env.JWT_SECRET,
       {
@@ -96,6 +116,8 @@ exports.login = async (req, res) => {
         _id: user._id,
         name: user.name,
         email: user.email,
+        role: user.role,
+        business: user.business,
       },
     });
   } catch (err) {
