@@ -42,6 +42,21 @@ export const getTickets = async ({ businessId = "", userId = "" } = {}) => {
   return res.json();
 };
 
+export const getMyTickets = async () => {
+  const res = await fetch(`${API}/tickets/my`, {
+    headers: getAuthHeaders(),
+  });
+
+  return res.json();
+};
+
+export const getBusinessTickets = async () => {
+  const res = await fetch(`${API}/tickets/business`, {
+    headers: getAuthHeaders(),
+  });
+  return res.json();
+};
+
 export const createTicket = async (ticket) => {
   const res = await fetch(`${API}/tickets`, {
     method: "POST",

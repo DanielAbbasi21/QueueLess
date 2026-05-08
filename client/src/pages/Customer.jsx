@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getBusinesses, createTicket, getTickets, cancelTicket } from "../services/api";
+import { getBusinesses, createTicket, getMyTickets, cancelTicket } from "../services/api";
 
 function Customer() {
   const [businesses, setBusinesses] = useState([]);
@@ -12,7 +12,7 @@ function Customer() {
   const fetchMyTickets = async () => {
   if (!user) return;
 
-  const data = await getTickets({ userId: user._id });
+  const data = await getMyTickets();
 
   if (!Array.isArray(data)) {
     setTickets([]);
