@@ -17,7 +17,7 @@ const TicketSchema = new mongoose.Schema({
 
   status: {
     type: String,
-    enum: ["waiting", "active", "done"],
+    enum: ["waiting", "active", "done", "cancelled"],
     default: "waiting",
   },
 
@@ -28,6 +28,8 @@ const TicketSchema = new mongoose.Schema({
   started_at: Date,
 
   completed_at: Date,
+  
+  cancelled_at: Date,
 });
 
 module.exports = mongoose.model("Ticket", TicketSchema);
