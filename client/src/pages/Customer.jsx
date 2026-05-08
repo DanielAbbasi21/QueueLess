@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getBusinesses, createTicket, getTickets } from "../services/api";
+import { getBusinesses, createTicket, getTickets, cancelTicket } from "../services/api";
 
 function Customer() {
   const [businesses, setBusinesses] = useState([]);
@@ -80,6 +80,18 @@ function Customer() {
     alert("Ticket created");
   };
 
+  const handleCancel = async (id) => {
+    const res = await cancelTicket(id);
+
+    if (res.error) {
+      alert(res.error);
+      return;
+    }
+
+    await fetchMyTickets();
+    alert("Ticket cancelled");
+  };
+
   return (
     <div>
       <h2>Customer Page</h2>
@@ -145,6 +157,12 @@ function Customer() {
                 <b>Estimated wait:</b> {t.estimatedWaitTime} minutes
               </p>
             </>
+          )}
+
+          {t.status === "waiting" && (
+            <button onClick={() => handleCancel(t._id)}>
+              Cancel Ticket
+            </button>
           )}
 
           {t.status === "active" && (
