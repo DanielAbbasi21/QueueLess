@@ -92,6 +92,14 @@ function Customer() {
     alert("Ticket cancelled");
   };
 
+  const currentTickets = tickets.filter(
+    (ticket) => ticket.status === "waiting" || ticket.status === "active"
+  );
+
+  const ticketHistory = tickets.filter(
+    (ticket) => ticket.status === "done" || ticket.status === "cancelled"
+  );
+
   return (
     <div>
       <h2>Customer Page</h2>
@@ -129,11 +137,11 @@ function Customer() {
 
       <hr />
 
-      <h3>My Tickets</h3>
+      <h3>Current Tickets</h3>
 
-      {tickets.length === 0 && <p>You have no tickets yet.</p>}
+      {currentTickets.length === 0 && <p>You have no active tickets.</p>}
 
-      {tickets.map((t) => (
+      {currentTickets.map((t) => (
         <div key={t._id}>
           <p>
             <b>Business:</b> {t.business?.name}
@@ -179,6 +187,46 @@ function Customer() {
           <hr/>
         </div>
       ))}
+
+      <h3>Ticket History</h3>
+
+      {ticketHistory.length === 0 && <p>No ticket history yet.</p>}
+
+      {ticketHistory.map((t) => (
+        <div key={t._id}>
+          <p>
+            <b>Business:</b> {t.business?.name}
+          </p>
+
+          <p>
+            <b>Message:</b> {t.message}
+          </p>
+
+          <p>
+            <b>Status:</b> {t.status}
+          </p>
+
+          <p>
+            <b>Created:</b> {new Date(t.created_at).toLocaleString()}
+          </p>
+
+          {t.completed_at && (
+            <p>
+              <b>Completed:</b> {new Date(t.completed_at).toLocaleString()}
+            </p>
+          )}
+
+          {t.cancelled_at && (
+            <p>
+              <b>Cancelled:</b> {new Date(t.cancelled_at).toLocaleString()}
+            </p>
+          )}
+
+          <hr />
+        </div>
+      ))}
+
+            
     </div>
   );
 }

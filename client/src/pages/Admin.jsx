@@ -71,6 +71,14 @@ function Admin() {
     alert("Ticket cancelled");
   };
 
+  const activeTickets = tickets.filter((ticket) => ticket.status === "active");
+
+  const waitingTickets = tickets.filter((ticket) => ticket.status === "waiting");
+
+  const ticketHistory = tickets.filter(
+    (ticket) => ticket.status === "done" || ticket.status === "cancelled"
+  );
+
   return (
     <div>
       <h2>Business dashboard</h2>
@@ -81,7 +89,11 @@ function Admin() {
 
       {tickets.length === 0 && <p>No tickets found</p>}
 
-      {tickets.map((t) => (
+      <h3>Active Customer</h3>
+
+      {activeTickets.length === 0 && <p>No active customer.</p>}
+
+      {activeTickets.map((t) => (
         <div key={t._id}>
           <p>
             <b>User:</b> {t.user?.name}
@@ -99,26 +111,97 @@ function Admin() {
             <b>Status:</b> {t.status}
           </p>
 
-          <button
-            onClick={() => handleStart(t._id)}
-            disabled={t.status !== "waiting"}
-          >
-            Start
-          </button>
+          {t.started_at && (
+            <p>
+              <b>Started:</b> {new Date(t.started_at).toLocaleString()}
+            </p>
+          )}
 
-          <button
-            onClick={() => handleDone(t._id)}
-            disabled={t.status !== "active"}
-          >
-            Done
-          </button>
+          <button onClick={() => handleDone(t._id)}>Done</button>
 
-          <button
-            onClick={() => handleCancel(t._id)}
-            disabled={!["waiting", "active"].includes(t.status)}
-          >
-            Cancel
-          </button>
+          <button onClick={() => handleCancel(t._id)}>Cancel</button>
+
+          <hr />
+        </div>
+      ))}
+
+      <h3>Current Queue</h3>
+
+      {waitingTickets.length === 0 && <p>No waiting tickets.</p>}
+
+      {waitingTickets.map((t) => (
+        <div key={t._id}>
+          <p>
+            <b>User:</b> {t.user?.name}
+          </p>
+
+          <p>
+            <b>Business:</b> {t.business?.name}
+          </p>
+
+          <p>
+            <b>Message:</b> {t.message}
+          </p>
+
+          <p>
+            <b>Status:</b> {t.status}
+          </p>
+
+          <p>
+            <b>Created:</b> {new Date(t.created_at).toLocaleString()}
+          </p>
+
+          <button onClick={() => handleStart(t._id)}>Start</button>
+
+          <button onClick={() => handleCancel(t._id)}>Cancel</button>
+
+          <hr />
+        </div>
+      ))}
+
+      <h3>Ticket History</h3>
+
+      {ticketHistory.length === 0 && <p>No ticket history yet.</p>}
+
+      {ticketHistory.map((t) => (
+        <div key={t._id}>
+          <p>
+            <b>User:</b> {t.user?.name}
+          </p>
+
+          <p>
+            <b>Business:</b> {t.business?.name}
+          </p>
+
+          <p>
+            <b>Message:</b> {t.message}
+          </p>
+
+          <p>
+            <b>Status:</b> {t.status}
+          </p>
+
+          <p>
+            <b>Created:</b> {new Date(t.created_at).toLocaleString()}
+          </p>
+
+          {t.started_at && (
+            <p>
+              <b>Started:</b> {new Date(t.started_at).toLocaleString()}
+            </p>
+          )}
+
+          {t.completed_at && (
+            <p>
+              <b>Completed:</b> {new Date(t.completed_at).toLocaleString()}
+            </p>
+          )}
+
+          {t.cancelled_at && (
+            <p>
+              <b>Cancelled:</b> {new Date(t.cancelled_at).toLocaleString()}
+            </p>
+          )}
 
           <hr />
         </div>
