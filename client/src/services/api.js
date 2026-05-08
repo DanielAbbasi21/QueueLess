@@ -21,6 +21,14 @@ export const login = async (email, password) => {
   return res.json();
 };
 
+export const getMe = async () => {
+  const res = await fetch(`${API}/auth/me`, {
+    headers: getAuthHeaders(),
+  });
+
+  return res.json();
+};
+
 export const register = async ({ name, email, password, role, businessName }) => {
   const res = await fetch(`${API}/auth/register`, {
     method: "POST",
