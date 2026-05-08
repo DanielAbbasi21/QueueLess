@@ -3,6 +3,7 @@ import { useState } from "react";
 import Login from "./pages/Login";
 import Customer from "./pages/Customer";
 import Busniess from "./pages/Busniess";
+import Account from "./pages/Account";
 
 function App() {
   const [user, setUser] = useState(
@@ -10,6 +11,7 @@ function App() {
   );
 
   const [showRegister, setShowRegister] = useState(false);
+  const [page, setPage] = useState("dashboard");
 
 
   if (!user) {
@@ -21,16 +23,21 @@ function App() {
 }
 
   return (
-    <div>
-      {user.role === "customer" && <Customer />}
+  <div>
+    <button onClick={() => setPage("dashboard")}>Dashboard</button>
+    <button onClick={() => setPage("account")}>Account</button>
 
-      {user.role === "business" && <Busniess />}
+    {page === "account" && <Account />}
 
-      {!["customer", "business"].includes(user.role) && (
-        <p>Unknown user role</p>
-      )}
-    </div>
-  );
+    {page === "dashboard" && user.role === "customer" && <Customer />}
+
+    {page === "dashboard" && user.role === "business" && <Busniess />}
+
+    {!["customer", "business"].includes(user.role) && (
+      <p>Unknown user role</p>
+    )}
+  </div>
+);
 }
 
 export default App;
