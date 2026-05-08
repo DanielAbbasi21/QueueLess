@@ -113,3 +113,85 @@ exports.doneTicket = async (req, res) => {
     });
   }
 };
+
+exports.cancelTicket = async (req, res) => {
+  try {
+    const ticket = await Ticket.findById(req.params.id);
+
+    if (!ticket) {
+      return res.status(404).json({ error: "Ticket not found" });
+    }
+
+    if (ticket.status === "done") {
+      return res.status(400).json({
+        error: "Done tickets cannot be cancelled",
+      });
+    }
+
+    if (ticket.status === "cancelled") {
+      return res.status(400).json({
+        error: "Ticket is already cancelled",
+      });
+    }
+
+    if (req.user.role === "customer") {
+      if (ticket.user.toString() !== req.user.userId) {
+        return res.status(403).json({
+          error: "You can only cancel your own tickets",
+        });
+      }
+
+      if (ticket.status !== "waiting") {
+        return res.status(400).json({
+          error: "Customers can only cancel waiting tickets",
+        });
+      }
+    }
+
+    if (req.user.role === "business") {
+      if (ticket.business.toString() !== req.user.business) {
+        return res.status(403).json({
+          error: "You can only cancel tickets for your own business",
+        });
+      }
+
+      if (ticket.status === "active") {
+        if (!ticket.started_at) {
+          return res.status(400).json({
+            error: "Active ticket has no start time",
+          });
+        }
+
+        const fiveMinutes = 5 * 60 * 1000;
+        const timeSinceStart = Date.now() - new Date(ticket.started_at).getTime();
+
+        if (timeSinceStart < fiveMinutes) {
+          return res.status(400).json({
+            error: "Active tickets can only be cancelled after 5 minutes",
+          });
+        }
+      }
+
+      if (!["waiting", "active"].includes(ticket.status)) {
+        return res.status(400).json({
+          error: "Business can only cancel waiting or active tickets",
+        });
+      }
+    }
+
+    if (!["customer", "business"].includes(req.user.role)) {
+      return res.status(403).json({
+        error: "Invalid user role",
+      });
+    }
+
+    const cancelled = await ticketModel.cancelTicket(req.params.id);
+
+    res.json(cancelled);
+  } catch (err) {
+    res.status(500).json({
+      error: "Failed to cancel ticket",
+      details: err.message,
+    });
+  }
+};

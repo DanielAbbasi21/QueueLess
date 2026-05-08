@@ -67,6 +67,12 @@ exports.getAllTickets = async (business, user) => {
         return ticketObject;
       }
 
+      if (ticket.status === "cancelled") {
+        ticketObject.queuePosition = null;
+        ticketObject.estimatedWaitTime = null;
+        return ticketObject;
+      }
+
       const waitingTicketsForBusiness = allWaitingTickets.filter(
         (waitingTicket) =>
           waitingTicket.business.toString() === ticket.business._id.toString()
@@ -149,3 +155,16 @@ exports.doneTicket = async (id) => {
     .populate("user", "-password")
     .populate("business");
 };
+
+exports.cancelTicket = async (id) => {
+  return await Ticket.findByIdAndUpdate(
+    id,
+    {
+      status: "cancelled",
+      cancelled_at: new Date(),
+    },
+    { new: true }
+  )
+    .populate("user", "-password")
+    .populate("business");
+}
