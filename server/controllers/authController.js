@@ -1,9 +1,10 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const Business = require("../models/Business");
 
 exports.register = async (req, res) => {
-  const { name, email, password, role, business } = req.body;
+  const { name, email, password, role, business, businessName } = req.body;
 
   try {
     if (!name || !email || !password) {
@@ -22,10 +23,10 @@ exports.register = async (req, res) => {
       });
     }
 
-    if (userRole === "business" && !business) {
+    if (userRole === "business" && !business && !businessName) {
       return res.status(400).json({
         success: false,
-        message: "Business account requires a business ID",
+        message: "Business account requires a business ID or business name",
       });
     }
 
@@ -40,12 +41,25 @@ exports.register = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    let businessId = null;
+
+    if (userRole === "business") {
+      if (business) {
+        businessId = business;
+      } else {
+        const newBusiness = await Business.create({ 
+          name: businessName 
+        });
+        businessId = newBusiness._id;
+      }
+    }
+
     const user = await User.create({
       name,
       email,
       password: hashedPassword,
       role: userRole,
-      business: userRole === "business" ? business : null,
+      business: userRole === "business" ? businessId : null,
     });
 
     res.status(201).json({
