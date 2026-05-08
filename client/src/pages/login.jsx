@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { login } from "../services/api";
 
-function Login({ setUser }) {
+function Login({ setUser, setShowRegister }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -40,6 +40,10 @@ function Login({ setUser }) {
       <br />
 
       <button onClick={handleLogin}>Login</button>
+      <p>
+        Don't have an account?{" "}
+        <button onClick={() => setShowRegister(true)}>Register</button>
+      </p>
     </div>
   );
 }
