@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import {
-  getTickets,
+  getBusinessTickets,
   startTicket,
   doneTicket,
   cancelTicket,
@@ -15,7 +15,7 @@ function Admin() {
   const fetchTickets = async () => {
     if (!user?.business) return;
 
-    const data = await getTickets({ businessId: user.business });
+    const data = await getBusinessTickets();
 
     if (!Array.isArray(data)) {
       setTickets([]);
