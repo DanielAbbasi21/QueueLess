@@ -70,6 +70,15 @@ export const doneTicket = async (id) => {
   return res.json();
 };
 
+export const cancelTicket = async (id) => {
+  const res = await fetch(`${API}/tickets/cancel/${id}`, {
+    method: "PUT",
+    headers: getAuthHeaders(),
+  });
+
+  return res.json();
+};
+
 export const getBusinesses = async () => {
   const res = await fetch(`${API}/businesses`);
   return res.json();

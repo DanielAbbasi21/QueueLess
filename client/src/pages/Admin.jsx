@@ -3,6 +3,7 @@ import {
   getTickets,
   startTicket,
   doneTicket,
+  cancelTicket,
 } from "../services/api";
 
 function Admin() {
@@ -58,6 +59,18 @@ function Admin() {
     window.location.reload();
   };
 
+  const handleCancel = async (id) => {
+    const res = await cancelTicket(id);
+
+    if (res.error) {
+      alert(res.error);
+      return;
+    }
+
+    fetchTickets();
+    alert("Ticket cancelled");
+  };
+
   return (
     <div>
       <h2>Business dashboard</h2>
@@ -98,6 +111,13 @@ function Admin() {
             disabled={t.status !== "active"}
           >
             Done
+          </button>
+
+          <button
+            onClick={() => handleCancel(t._id)}
+            disabled={!["waiting", "active"].includes(t.status)}
+          >
+            Cancel
           </button>
 
           <hr />
