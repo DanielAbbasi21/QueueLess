@@ -30,18 +30,16 @@ function Customer() {
   setTickets(data);
 };
 
-
-
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
-    window.location.reload();
-  };
-
   useEffect(() => {
     getBusinesses().then((data) => setBusinesses(data));
     fetchMyTickets();
-  }, [user]);
+
+    const interval = setInterval(() => {
+      fetchMyTickets();
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const handleSubmit = async () => {
     if (!user) {
@@ -104,7 +102,6 @@ function Customer() {
     <div>
       <h2>Customer Page</h2>
 
-      <button onClick={handleLogout}>Logout</button>
 
       <br /><br />
 

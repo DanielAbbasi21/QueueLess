@@ -2,7 +2,7 @@ import Register from "./pages/Register";
 import { useState } from "react";
 import Login from "./pages/Login";
 import Customer from "./pages/Customer";
-import Busniess from "./pages/Busniess";
+import Business from "./pages/Business";
 import Account from "./pages/Account";
 
 function App() {
@@ -31,7 +31,7 @@ function App() {
 
     {page === "dashboard" && user.role === "customer" && <Customer />}
 
-    {page === "dashboard" && user.role === "business" && <Busniess />}
+    {page === "dashboard" && user.role === "business" && <Business />}
 
     {!["customer", "business"].includes(user.role) && (
       <p>Unknown user role</p>
