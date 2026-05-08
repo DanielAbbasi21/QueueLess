@@ -195,3 +195,53 @@ exports.cancelTicket = async (req, res) => {
     });
   }
 };
+
+exports.getMyTickets = async (req, res) => {
+  try {
+    if (req.user.role !== "customer") {
+      return res.status(403).json({
+        error: "Only customers can access their own tickets",
+      });
+    }
+
+
+    const tickets = await ticketModel.getAllTickets(null, req.user.userId);
+
+
+    res.json(tickets);
+  } catch (err) {
+    res.status(500).json({
+      error: "Failed to fetch customer tickets",
+      details: err.message,
+    });
+  }
+};
+
+
+exports.getBusinessTickets = async (req, res) => {
+  try {
+    if (req.user.role !== "business") {
+      return res.status(403).json({
+        error: "Only business users can access business tickets",
+      });
+    }
+
+
+    if (!req.user.business) {
+      return res.status(400).json({
+        error: "Business user is not connected to a business",
+      });
+    }
+
+
+    const tickets = await ticketModel.getAllTickets(req.user.business, null);
+
+
+    res.json(tickets);
+  } catch (err) {
+    res.status(500).json({
+      error: "Failed to fetch business tickets",
+      details: err.message,
+    });
+  }
+};
