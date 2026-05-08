@@ -29,6 +29,12 @@ function Admin() {
 
   useEffect(() => {
     fetchTickets();
+
+    const interval = setInterval(() => {
+      fetchTickets();
+    }, 5000);
+
+    return () => clearInterval(interval);
   }, []);
 
   const handleStart = async (id) => {
@@ -51,12 +57,6 @@ function Admin() {
     }
 
     fetchTickets();
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
-    window.location.reload();
   };
 
   const handleCancel = async (id) => {
@@ -82,8 +82,6 @@ function Admin() {
   return (
     <div>
       <h2>Business dashboard</h2>
-      <button onClick={handleLogout}>Logout</button>
-
 
       <br /><br />
 

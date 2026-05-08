@@ -23,6 +23,12 @@ function Account() {
     return <p>Loading account...</p>;
   }
 
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    window.location.reload();
+  };
+
   return (
     <div>
       <h2>Account</h2>
@@ -44,6 +50,7 @@ function Account() {
           <b>Business:</b> {user.business?.name}
         </p>
       )}
+      <button onClick={handleLogout}>Logout</button>
     </div>
   );
 }
