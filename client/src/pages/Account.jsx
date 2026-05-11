@@ -30,27 +30,42 @@ function Account() {
   };
 
   return (
-    <div>
-      <h2>Account</h2>
-
-      <p>
-        <b>Name:</b> {user.name}
-      </p>
-
-      <p>
-        <b>Email:</b> {user.email}
-      </p>
-
-      <p>
-        <b>Role:</b> {user.role}
-      </p>
-
-      {user.role === "business" && (
-        <p>
-          <b>Business:</b> {user.business?.name}
+    <div className="dashboard-page">
+      <div className="dashboard-header">
+        <h2 className="dashboard-title">Account</h2>
+        <p className="dashboard-subtitle">
+          View your account information.
         </p>
-      )}
-      <button onClick={handleLogout}>Logout</button>
+      </div>
+
+
+      <div className="account-card">
+        <p>
+          <b>Name:</b> {user.name}
+        </p>
+
+
+        <p>
+          <b>Email:</b> {user.email}
+        </p>
+
+
+        <p>
+          <b>Role:</b> {user.role}
+        </p>
+
+
+        {user.role === "business" && (
+          <p>
+            <b>Business:</b> {user.business?.name}
+          </p>
+        )}
+
+
+        <button className="dashboard-button danger" onClick={handleLogout}>
+          Logout
+        </button>
+      </div>
     </div>
   );
 }

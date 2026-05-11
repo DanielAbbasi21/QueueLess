@@ -1,0 +1,169 @@
+.dashboard-page {
+  width: 100%;
+  min-height: 100svh;
+  padding: 32px;
+  text-align: left;
+}
+
+
+.dashboard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+
+.dashboard-title {
+  margin: 0;
+}
+
+
+.dashboard-subtitle {
+  color: var(--text);
+  margin-top: 4px;
+}
+
+
+.dashboard-section {
+  margin-top: 28px;
+}
+
+
+.section-title {
+  margin-bottom: 12px;
+}
+
+
+.ticket-grid {
+  display: grid;
+  gap: 14px;
+}
+
+
+.ticket-card {
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--social-bg);
+  box-shadow: var(--shadow);
+}
+
+
+.ticket-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+
+
+.empty-message {
+  padding: 16px;
+  border: 1px dashed var(--border);
+  border-radius: 14px;
+  color: var(--text);
+}
+
+
+.account-card {
+  max-width: 520px;
+  padding: 24px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--social-bg);
+  box-shadow: var(--shadow);
+}
+
+.form-card {
+  width: 100%;
+  max-width: 520px;
+  padding: 22px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--social-bg);
+  box-shadow: var(--shadow);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.dashboard-input,
+.dashboard-select,
+.dashboard-textarea {
+  width: 100%;
+  display: block;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg);
+  color: var(--text-h);
+}
+
+.dashboard-textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.dashboard-button {
+  width: fit-content;
+  padding: 10px 16px;
+  border: 1px solid var(--accent-border);
+  border-radius: 12px;
+  background: var(--accent);
+  color: white;
+  font-weight: 600;
+}
+
+.dashboard-button:hover {
+  opacity: 0.9;
+}
+
+.dashboard-button.secondary {
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+.dashboard-button.danger {
+  background: #dc2626;
+  border-color: #dc2626;
+  color: white;
+}
+.app-nav {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+}
+
+
+.nav-button {
+  padding: 9px 16px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--social-bg);
+  color: var(--text);
+  font-weight: 600;
+}
+
+
+.nav-button:hover {
+  border-color: var(--accent-border);
+  color: var(--accent);
+}
+
+
+.nav-button.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+}
