@@ -24,8 +24,22 @@ function App() {
 
   return (
   <div>
-    <button onClick={() => setPage("dashboard")}>Dashboard</button>
-    <button onClick={() => setPage("account")}>Account</button>
+    <nav className="app-nav">
+      <button
+        className={`nav-button ${page === "dashboard" ? "active" : ""}`}
+        onClick={() => setPage("dashboard")}
+      >
+        Dashboard
+      </button>
+
+
+      <button
+        className={`nav-button ${page === "account" ? "active" : ""}`}
+        onClick={() => setPage("account")}
+      >
+        Account
+      </button>
+    </nav>
 
     {page === "account" && <Account />}
 

@@ -80,130 +80,200 @@ function Admin() {
   );
 
   return (
-    <div>
-      <h2>Business dashboard</h2>
+    <div className="dashboard-page">
+      <div className="dashboard-header">
+        <h2 className="dashboard-title">Business Dashboard</h2>
+        <p className="dashboard-subtitle">
+          Manage your queue and customer tickets.
+        </p>
+      </div>
 
-      <br /><br />
 
-      {tickets.length === 0 && <p>No tickets found</p>}
+      {tickets.length === 0 && (
+        <p className="empty-message">No tickets found</p>
+      )}
 
-      <h3>Active Customer</h3>
 
-      {activeTickets.length === 0 && <p>No active customer.</p>}
+      <section className="dashboard-section">
+        <h3 className="section-title">Active Customer</h3>
 
-      {activeTickets.map((t) => (
-        <div key={t._id}>
-          <p>
-            <b>User:</b> {t.user?.name}
-          </p>
 
-          <p>
-            <b>Business:</b> {t.business?.name}
-          </p>
+        {activeTickets.length === 0 && (
+          <p className="empty-message">No active customer.</p>
+        )}
 
-          <p>
-            <b>Message:</b> {t.message}
-          </p>
 
-          <p>
-            <b>Status:</b> {t.status}
-          </p>
+        <div className="ticket-grid">
+          {activeTickets.map((t) => (
+            <div className="ticket-card" key={t._id}>
+              <p>
+                <b>User:</b> {t.user?.name}
+              </p>
 
-          {t.started_at && (
-            <p>
-              <b>Started:</b> {new Date(t.started_at).toLocaleString()}
-            </p>
-          )}
 
-          <button onClick={() => handleDone(t._id)}>Done</button>
+              <p>
+                <b>Business:</b> {t.business?.name}
+              </p>
 
-          <button onClick={() => handleCancel(t._id)}>Cancel</button>
 
-          <hr />
+              <p>
+                <b>Message:</b> {t.message}
+              </p>
+
+
+              <p>
+                <b>Status:</b> {t.status}
+              </p>
+
+
+              {t.started_at && (
+                <p>
+                  <b>Started:</b> {new Date(t.started_at).toLocaleString()}
+                </p>
+              )}
+
+
+              <div className="ticket-actions">
+                <button
+                  className="dashboard-button"
+                  onClick={() => handleDone(t._id)}
+                >
+                  Done
+                </button>
+
+
+                <button
+                  className="dashboard-button danger"
+                  onClick={() => handleCancel(t._id)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
-      ))}
+      </section>
 
-      <h3>Current Queue</h3>
 
-      {waitingTickets.length === 0 && <p>No waiting tickets.</p>}
+      <section className="dashboard-section">
+        <h3 className="section-title">Current Queue</h3>
 
-      {waitingTickets.map((t) => (
-        <div key={t._id}>
-          <p>
-            <b>User:</b> {t.user?.name}
-          </p>
 
-          <p>
-            <b>Business:</b> {t.business?.name}
-          </p>
+        {waitingTickets.length === 0 && (
+          <p className="empty-message">No waiting tickets.</p>
+        )}
 
-          <p>
-            <b>Message:</b> {t.message}
-          </p>
 
-          <p>
-            <b>Status:</b> {t.status}
-          </p>
+        <div className="ticket-grid">
+          {waitingTickets.map((t) => (
+            <div className="ticket-card" key={t._id}>
+              <p>
+                <b>User:</b> {t.user?.name}
+              </p>
 
-          <p>
-            <b>Created:</b> {new Date(t.created_at).toLocaleString()}
-          </p>
 
-          <button onClick={() => handleStart(t._id)}>Start</button>
+              <p>
+                <b>Business:</b> {t.business?.name}
+              </p>
 
-          <button onClick={() => handleCancel(t._id)}>Cancel</button>
 
-          <hr />
+              <p>
+                <b>Message:</b> {t.message}
+              </p>
+
+
+              <p>
+                <b>Status:</b> {t.status}
+              </p>
+
+
+              <p>
+                <b>Created:</b> {new Date(t.created_at).toLocaleString()}
+              </p>
+
+
+              <div className="ticket-actions">
+                <button
+                  className="dashboard-button"
+                  onClick={() => handleStart(t._id)}
+                >
+                  Start
+                </button>
+
+
+                <button
+                  className="dashboard-button danger"
+                  onClick={() => handleCancel(t._id)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
-      ))}
+      </section>
 
-      <h3>Ticket History</h3>
 
-      {ticketHistory.length === 0 && <p>No ticket history yet.</p>}
+      <section className="dashboard-section">
+        <h3 className="section-title">Ticket History</h3>
 
-      {ticketHistory.map((t) => (
-        <div key={t._id}>
-          <p>
-            <b>User:</b> {t.user?.name}
-          </p>
 
-          <p>
-            <b>Business:</b> {t.business?.name}
-          </p>
+        {ticketHistory.length === 0 && (
+          <p className="empty-message">No ticket history yet.</p>
+        )}
 
-          <p>
-            <b>Message:</b> {t.message}
-          </p>
 
-          <p>
-            <b>Status:</b> {t.status}
-          </p>
+        <div className="ticket-grid">
+          {ticketHistory.map((t) => (
+            <div className="ticket-card" key={t._id}>
+              <p>
+                <b>User:</b> {t.user?.name}
+              </p>
 
-          <p>
-            <b>Created:</b> {new Date(t.created_at).toLocaleString()}
-          </p>
 
-          {t.started_at && (
-            <p>
-              <b>Started:</b> {new Date(t.started_at).toLocaleString()}
-            </p>
-          )}
+              <p>
+                <b>Business:</b> {t.business?.name}
+              </p>
 
-          {t.completed_at && (
-            <p>
-              <b>Completed:</b> {new Date(t.completed_at).toLocaleString()}
-            </p>
-          )}
 
-          {t.cancelled_at && (
-            <p>
-              <b>Cancelled:</b> {new Date(t.cancelled_at).toLocaleString()}
-            </p>
-          )}
+              <p>
+                <b>Message:</b> {t.message}
+              </p>
 
-          <hr />
+
+              <p>
+                <b>Status:</b> {t.status}
+              </p>
+
+
+              <p>
+                <b>Created:</b> {new Date(t.created_at).toLocaleString()}
+              </p>
+
+
+              {t.started_at && (
+                <p>
+                  <b>Started:</b> {new Date(t.started_at).toLocaleString()}
+                </p>
+              )}
+
+
+              {t.completed_at && (
+                <p>
+                  <b>Completed:</b> {new Date(t.completed_at).toLocaleString()}
+                </p>
+              )}
+
+
+              {t.cancelled_at && (
+                <p>
+                  <b>Cancelled:</b> {new Date(t.cancelled_at).toLocaleString()}
+                </p>
+              )}
+            </div>
+          ))}
         </div>
-      ))}
+      </section>
     </div>
   );
 }

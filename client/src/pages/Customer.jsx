@@ -99,131 +99,165 @@ function Customer() {
   );
 
   return (
-    <div>
-      <h2>Customer Page</h2>
+     <div className="dashboard-page">
+      <div className="dashboard-header">
+        <h2 className="dashboard-title">Customer Dashboard</h2>
+        <p className="dashboard-subtitle">
+          Create tickets and follow your queue status.
+        </p>
+      </div>
 
 
-      <br /><br />
+      <section className="dashboard-section">
+        <h3 className="section-title">Create Ticket</h3>
 
-      <h3>Create Ticket</h3>
 
-      <select
-        value={selectedBusiness}
-        onChange={(e) => setSelectedBusiness(e.target.value)}
-      >
-        <option value="">Select a business</option>
+        <div className="form-card">
+          <div className="form-group">
+            <select
+              className="dashboard-select"
+              value={selectedBusiness}
+              onChange={(e) => setSelectedBusiness(e.target.value)}
+            >
+              <option value="">Select a business</option>
 
-        {businesses.map((b) => (
-          <option key={b._id} value={b._id}>
-            {b.name}
-          </option>
-        ))}
-      </select>
 
-      <br /><br />
+              {businesses.map((b) => (
+                <option key={b._id} value={b._id}>
+                  {b.name}
+                </option>
+              ))}
+            </select>
 
-      <textarea
-        placeholder="What do you need help with?"
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-      />
 
-      <br /><br />
+            <textarea
+              className="dashboard-textarea"
+              placeholder="What do you need help with?"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+            />
 
-      <button onClick={handleSubmit}>Submit Ticket</button>
 
-      <hr />
-
-      <h3>Current Tickets</h3>
-
-      {currentTickets.length === 0 && <p>You have no active tickets.</p>}
-
-      {currentTickets.map((t) => (
-        <div key={t._id}>
-          <p>
-            <b>Business:</b> {t.business?.name}
-          </p>
-
-          <p>
-            <b>Message:</b> {t.message}
-          </p>
-
-          <p>
-            <b>Status:</b> {t.status}
-          </p>
-
-          {t.status === "waiting" && (
-            <>
-              <p>
-                <b>Queue position:</b> {t.queuePosition}
-              </p>
-
-              <p>
-                <b>Estimated wait:</b> {t.estimatedWaitTime} minutes
-              </p>
-            </>
-          )}
-
-          {t.status === "waiting" && (
-            <button onClick={() => handleCancel(t._id)}>
-              Cancel Ticket
+            <button className="dashboard-button" onClick={handleSubmit}>
+              Submit Ticket
             </button>
-          )}
-
-          {t.status === "active" && (
-            <p>
-              <b>Queue position:</b> Now serving
-            </p>
-          )}
-
-          {t.status === "done" && (
-            <p>
-              <b>Queue position:</b> Completed
-            </p>
-          )}
-          <hr/>
+          </div>
         </div>
-      ))}
+      </section>
 
-      <h3>Ticket History</h3>
 
-      {ticketHistory.length === 0 && <p>No ticket history yet.</p>}
+      <section className="dashboard-section">
+        <h3 className="section-title">Current Tickets</h3>
 
-      {ticketHistory.map((t) => (
-        <div key={t._id}>
-          <p>
-            <b>Business:</b> {t.business?.name}
-          </p>
 
-          <p>
-            <b>Message:</b> {t.message}
-          </p>
+        {currentTickets.length === 0 && (
+          <p className="empty-message">You have no active tickets.</p>
+        )}
 
-          <p>
-            <b>Status:</b> {t.status}
-          </p>
 
-          <p>
-            <b>Created:</b> {new Date(t.created_at).toLocaleString()}
-          </p>
+        <div className="ticket-grid">
+          {currentTickets.map((t) => (
+            <div className="ticket-card" key={t._id}>
+              <p>
+                <b>Business:</b> {t.business?.name}
+              </p>
 
-          {t.completed_at && (
-            <p>
-              <b>Completed:</b> {new Date(t.completed_at).toLocaleString()}
-            </p>
-          )}
 
-          {t.cancelled_at && (
-            <p>
-              <b>Cancelled:</b> {new Date(t.cancelled_at).toLocaleString()}
-            </p>
-          )}
+              <p>
+                <b>Message:</b> {t.message}
+              </p>
 
-          <hr />
+
+              <p>
+                <b>Status:</b> {t.status}
+              </p>
+
+
+              {t.status === "waiting" && (
+                <>
+                  <p>
+                    <b>Queue position:</b> {t.queuePosition}
+                  </p>
+
+
+                  <p>
+                    <b>Estimated wait:</b> {t.estimatedWaitTime} minutes
+                  </p>
+                </>
+              )}
+
+
+              {t.status === "active" && (
+                <p>
+                  <b>Queue position:</b> Now serving
+                </p>
+              )}
+
+
+              {t.status === "waiting" && (
+                <div className="ticket-actions">
+                  <button
+                    className="dashboard-button danger"
+                    onClick={() => handleCancel(t._id)}
+                  >
+                    Cancel Ticket
+                  </button>
+                </div>
+              )}
+            </div>
+          ))}
         </div>
-      ))}
+      </section>
 
-            
+
+      <section className="dashboard-section">
+        <h3 className="section-title">Ticket History</h3>
+
+
+        {ticketHistory.length === 0 && (
+          <p className="empty-message">No ticket history yet.</p>
+        )}
+
+
+        <div className="ticket-grid">
+          {ticketHistory.map((t) => (
+            <div className="ticket-card" key={t._id}>
+              <p>
+                <b>Business:</b> {t.business?.name}
+              </p>
+
+
+              <p>
+                <b>Message:</b> {t.message}
+              </p>
+
+
+              <p>
+                <b>Status:</b> {t.status}
+              </p>
+
+
+              <p>
+                <b>Created:</b> {new Date(t.created_at).toLocaleString()}
+              </p>
+
+
+              {t.completed_at && (
+                <p>
+                  <b>Completed:</b> {new Date(t.completed_at).toLocaleString()}
+                </p>
+              )}
+
+
+              {t.cancelled_at && (
+                <p>
+                  <b>Cancelled:</b> {new Date(t.cancelled_at).toLocaleString()}
+                </p>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }
