@@ -6,29 +6,38 @@ function Customer() {
   const [tickets, setTickets] = useState([]);
   const [message, setMessage] = useState("");
   const [selectedBusiness, setSelectedBusiness] = useState("");
+  const [loading, setLoading] = useState(true);
+  
 
   const user = JSON.parse(localStorage.getItem("user") || "null");
 
   const fetchMyTickets = async () => {
-  if (!user) return;
-
-  const data = await getMyTickets();
-
-  if (!Array.isArray(data)) {
-    setTickets([]);
-
-    if (data.message === "Invalid or expired token" || data.message === "No token provided") {
-      localStorage.removeItem("user");
-      localStorage.removeItem("token");
-      alert("Your session has expired. Please log in again.");
-      window.location.reload();
+    if (!user) {
+      setLoading(false);
       return;
     }
-    alert(data.message || data.error || "Failed to fetch tickets");
-    return;
-  }
-  setTickets(data);
-};
+
+    const data = await getMyTickets();
+
+    if (!Array.isArray(data)) {
+      setTickets([]);
+      setLoading(false);
+
+      if (data.message === "Invalid or expired token" || data.message === "No token provided") {
+        localStorage.removeItem("user");
+        localStorage.removeItem("token");
+        alert("Your session has expired. Please log in again.");
+        window.location.reload();
+        return;
+      }
+
+      alert(data.message || data.error || "Failed to fetch tickets");
+      return;
+    }
+
+    setTickets(data);
+    setLoading(false);
+  };
 
   useEffect(() => {
     getBusinesses().then((data) => setBusinesses(data));
@@ -149,8 +158,9 @@ function Customer() {
       <section className="dashboard-section">
         <h3 className="section-title">Current Tickets</h3>
 
+        {loading && <p className="empty-message">Loading tickets...</p>}
 
-        {currentTickets.length === 0 && (
+        {!loading && currentTickets.length === 0 && (
           <p className="empty-message">You have no active tickets.</p>
         )}
 
@@ -215,7 +225,6 @@ function Customer() {
 
       <section className="dashboard-section">
         <h3 className="section-title">Ticket History</h3>
-
 
         {ticketHistory.length === 0 && (
           <p className="empty-message">No ticket history yet.</p>
