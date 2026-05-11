@@ -107,6 +107,12 @@ function Customer() {
     (ticket) => ticket.status === "done" || ticket.status === "cancelled"
   );
 
+  const formatDate = (date) => {
+    if (!date) return "-";
+
+    return new Date(date).toLocaleString();
+  };
+
   return (
      <div className="dashboard-page">
       <div className="dashboard-header">
@@ -253,20 +259,20 @@ function Customer() {
 
 
               <p>
-                <b>Created:</b> {new Date(t.created_at).toLocaleString()}
+                <b>Created:</b> {formatDate(t.created_at)}
               </p>
 
 
               {t.completed_at && (
                 <p>
-                  <b>Completed:</b> {new Date(t.completed_at).toLocaleString()}
+                  <b>Completed:</b> {formatDate(t.completed_at)}
                 </p>
               )}
 
 
               {t.cancelled_at && (
                 <p>
-                  <b>Cancelled:</b> {new Date(t.cancelled_at).toLocaleString()}
+                  <b>Cancelled:</b> {formatDate(t.cancelled_at)}
                 </p>
               )}
             </div>
