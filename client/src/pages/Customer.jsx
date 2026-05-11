@@ -169,7 +169,10 @@ function Customer() {
 
 
               <p>
-                <b>Status:</b> {t.status}
+                <b>Status:</b>{" "}
+                <span className={`status-badge status-${t.status}`}>
+                  {t.status}
+                </span>
               </p>
 
 
@@ -233,7 +236,10 @@ function Customer() {
 
 
               <p>
-                <b>Status:</b> {t.status}
+                <b>Status:</b>{" "}
+                <span className={`status-badge status-${t.status}`}>
+                  {t.status}
+                </span>
               </p>
 
 

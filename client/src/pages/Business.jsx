@@ -122,7 +122,10 @@ function Admin() {
 
 
               <p>
-                <b>Status:</b> {t.status}
+                <b>Status:</b>{" "}
+                <span className={`status-badge status-${t.status}`}>
+                  {t.status}
+                </span>
               </p>
 
 
@@ -183,7 +186,10 @@ function Admin() {
 
 
               <p>
-                <b>Status:</b> {t.status}
+                <b>Status:</b>{" "}
+                <span className={`status-badge status-${t.status}`}>
+                  {t.status}
+                </span>
               </p>
 
 
@@ -242,7 +248,10 @@ function Admin() {
 
 
               <p>
-                <b>Status:</b> {t.status}
+                <b>Status:</b>{" "}
+                <span className={`status-badge status-${t.status}`}>
+                  {t.status}
+                </span>
               </p>
 
 
