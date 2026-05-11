@@ -8,22 +8,28 @@ import {
 
 function Admin() {
   const [tickets, setTickets] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const user = JSON.parse(localStorage.getItem("user") || "null");
 
   
   const fetchTickets = async () => {
-    if (!user?.business) return;
+    if (!user?.business) {
+      setLoading(false);
+      return;
+    }
 
     const data = await getBusinessTickets();
 
     if (!Array.isArray(data)) {
       setTickets([]);
+      setLoading(false);
       alert(data.message || data.error || "Failed to fetch tickets");
       return;
     }
 
     setTickets(data);
+    setLoading(false);
   };
   
 
@@ -89,7 +95,9 @@ function Admin() {
       </div>
 
 
-      {tickets.length === 0 && (
+      {loading && <p className="empty-message">Loading tickets...</p>}
+
+      {!loading && tickets.length === 0 && (
         <p className="empty-message">No tickets found</p>
       )}
 
@@ -98,7 +106,7 @@ function Admin() {
         <h3 className="section-title">Active Customer</h3>
 
 
-        {activeTickets.length === 0 && (
+        {!loading && activeTickets.length === 0 && (
           <p className="empty-message">No active customer.</p>
         )}
 
@@ -162,7 +170,7 @@ function Admin() {
         <h3 className="section-title">Current Queue</h3>
 
 
-        {waitingTickets.length === 0 && (
+        {!loading && waitingTickets.length === 0 && (
           <p className="empty-message">No waiting tickets.</p>
         )}
 
@@ -224,7 +232,7 @@ function Admin() {
         <h3 className="section-title">Ticket History</h3>
 
 
-        {ticketHistory.length === 0 && (
+        {!loading && ticketHistory.length === 0 && (
           <p className="empty-message">No ticket history yet.</p>
         )}
 

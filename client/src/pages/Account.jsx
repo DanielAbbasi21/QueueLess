@@ -3,26 +3,41 @@ import { getMe } from "../services/api";
 
 function Account() {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const fetchAccount = async () => {
     const res = await getMe();
 
     if (!res.success) {
+      setLoading(false);
       alert(res.message || "Failed to fetch account");
       return;
     }
 
     setUser(res.user);
+    setLoading(false);
   };
 
   useEffect(() => {
     fetchAccount();
   }, []);
 
-  if (!user) {
-    return <p>Loading account...</p>;
+  if (loading) {
+    return (
+      <div className="dashboard-page">
+        <p className="empty-message">Loading account...</p>
+      </div>
+    );
   }
 
+  if (!user) {
+    return (
+      <div className="dashboard-page">
+        <p className="empty-message">No account information found.</p>
+      </div>
+    );
+  }
+  
   const handleLogout = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
