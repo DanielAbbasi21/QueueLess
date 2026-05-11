@@ -42,74 +42,85 @@ function Register({ setShowRegister }) {
 
 
   return (
-    <div>
-      <h2>Register</h2>
+    <div className="auth-page">
+      <div className="auth-card">
+        <h2 className="auth-title">Register</h2>
+        <p className="auth-subtitle">Create your QueueLess account</p>
 
+        <div className="auth-form">
+          <div className="auth-field">
+            <label>Name</label>
+            <input
+              className="auth-input"
+              type="text"
+              placeholder="Enter your name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </div>
 
-      <input
-        type="text"
-        placeholder="Name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
+          <div className="auth-field">
+            <label>Email</label>
+            <input
+              className="auth-input"
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
 
+          <div className="auth-field">
+            <label>Password</label>
+            <input
+              className="auth-input"
+              type="password"
+              placeholder="Create a password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
 
-      <br />
+          <div className="auth-field">
+            <label>Account type</label>
+            <select
+              className="auth-select"
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+            >
+              <option value="customer">Customer</option>
+              <option value="business">Business</option>
+            </select>
+          </div>
 
+          {role === "business" && (
+            <div className="auth-field">
+              <label>Business name</label>
+              <input
+                className="auth-input"
+                type="text"
+                placeholder="Enter your business name"
+                value={businessName}
+                onChange={(e) => setBusinessName(e.target.value)}
+              />
+            </div>
+          )}
 
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
+          <button className="auth-button" onClick={handleRegister}>
+            Register
+          </button>
+        </div>
 
-
-      <br />
-
-
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-
-
-      <br />
-
-
-      <select value={role} onChange={(e) => setRole(e.target.value)}>
-        <option value="customer">Customer</option>
-        <option value="business">Business</option>
-      </select>
-
-
-      <br />
-
-
-      {role === "business" && (
-        <>
-          <input
-            type="text"
-            placeholder="Business name"
-            value={businessName}
-            onChange={(e) => setBusinessName(e.target.value)}
-          />
-
-
-          <br />
-        </>
-      )}
-
-
-      <button onClick={handleRegister}>Register</button>
-
-
-      <p>
-        Already have an account?{" "}
-        <button onClick={() => setShowRegister(false)}>Login</button>
-      </p>
+        <p className="auth-switch">
+          Already have an account?{" "}
+          <button
+            className="auth-link-button"
+            onClick={() => setShowRegister(false)}
+          >
+            Login
+          </button>
+        </p>
+      </div>
     </div>
   );
 }
