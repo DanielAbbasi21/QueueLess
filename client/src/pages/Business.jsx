@@ -104,7 +104,7 @@ function Business() {
       {loading && <p className="empty-message">Loading tickets...</p>}
 
       {!loading && tickets.length === 0 && (
-        <p className="empty-message">No tickets found</p>
+        <p className="empty-message">No tickets have been created for your business yet.</p>
       )}
 
 
@@ -113,7 +113,7 @@ function Business() {
 
 
         {!loading && activeTickets.length === 0 && (
-          <p className="empty-message">No active customer.</p>
+          <p className="empty-message">No active customer right now.</p>
         )}
 
 
@@ -181,7 +181,7 @@ function Business() {
 
 
         {!loading && waitingTickets.length === 0 && (
-          <p className="empty-message">No waiting tickets.</p>
+          <p className="empty-message">No customers waiting right now.</p>
         )}
 
 
@@ -243,7 +243,7 @@ function Business() {
 
 
         {!loading && ticketHistory.length === 0 && (
-          <p className="empty-message">No ticket history yet.</p>
+          <p className="empty-message">No completed or cancelled tickets yet.</p>
         )}
 
 
