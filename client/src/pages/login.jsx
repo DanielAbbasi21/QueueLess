@@ -18,32 +18,49 @@ function Login({ setUser, setShowRegister }) {
   };
 
   return (
-    <div>
-      <h2>Login</h2>
+    <div className="auth-page">
+      <div className="auth-card">
+        <h2 className="auth-title">Login</h2>
+        <p className="auth-subtitle">Welcome back to QueueLess</p>
 
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
+        <div className="auth-form">
+          <div className="auth-field">
+            <label>Email</label>
+            <input
+              className="auth-input"
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
 
-      <br />
+          <div className="auth-field">
+            <label>Password</label>
+            <input
+              className="auth-input"
+              type="password"
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
 
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
+          <button className="auth-button" onClick={handleLogin}>
+            Login
+          </button>
+        </div>
 
-      <br />
-
-      <button onClick={handleLogin}>Login</button>
-      <p>
-        Don't have an account?{" "}
-        <button onClick={() => setShowRegister(true)}>Register</button>
-      </p>
+        <p className="auth-switch">
+          Don't have an account?{" "}
+          <button
+            className="auth-link-button"
+            onClick={() => setShowRegister(true)}
+          >
+            Register
+          </button>
+        </p>
+      </div>
     </div>
   );
 }
