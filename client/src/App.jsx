@@ -25,21 +25,25 @@ function App() {
   return (
   <div>
     <nav className="app-nav">
-      <button
-        className={`nav-button ${page === "dashboard" ? "active" : ""}`}
-        onClick={() => setPage("dashboard")}
-      >
-        Dashboard
-      </button>
+      <div className="app-brand">QueueLess</div>
 
+      <div className="app-nav-actions">
+        <button
+          className={`nav-button ${page === "dashboard" ? "active" : ""}`}
+          onClick={() => setPage("dashboard")}
+        >
+          Dashboard
+        </button>
 
-      <button
-        className={`nav-button ${page === "account" ? "active" : ""}`}
-        onClick={() => setPage("account")}
-      >
-        Account
-      </button>
+        <button
+          className={`nav-button ${page === "account" ? "active" : ""}`}
+          onClick={() => setPage("account")}
+        >
+          Account
+        </button>
+      </div>
     </nav>
+
 
     {page === "account" && <Account />}
 

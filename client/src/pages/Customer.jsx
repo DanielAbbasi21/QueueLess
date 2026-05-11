@@ -167,7 +167,7 @@ function Customer() {
         {loading && <p className="empty-message">Loading tickets...</p>}
 
         {!loading && currentTickets.length === 0 && (
-          <p className="empty-message">You have no active tickets.</p>
+          <p className="empty-message">You have no active tickets right now. Create a ticket to join a queue.</p>
         )}
 
 
@@ -233,7 +233,7 @@ function Customer() {
         <h3 className="section-title">Ticket History</h3>
 
         {ticketHistory.length === 0 && (
-          <p className="empty-message">No ticket history yet.</p>
+          <p className="empty-message">No completed or cancelled tickets yet.</p>
         )}
 
 
