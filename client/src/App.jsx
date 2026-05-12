@@ -1,10 +1,12 @@
 import Register from "./pages/Register";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Login from "./pages/Login";
 import Customer from "./pages/Customer";
 import Business from "./pages/Business";
 import Account from "./pages/Account";
 import Inbox from "./pages/Inbox";
+import { getUnreadNotificationCount } from "./services/api";
+
 
 function App() {
   const [user, setUser] = useState(
@@ -13,6 +15,29 @@ function App() {
 
   const [showRegister, setShowRegister] = useState(false);
   const [page, setPage] = useState("dashboard");
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  const fetchUnreadCount = async () => {
+  if (!user || user.role !== "customer") return;
+
+  const res = await getUnreadNotificationCount();
+
+  if (typeof res.count === "number") {
+    setUnreadCount(res.count);
+  }
+};
+
+useEffect(() => {
+  if (!user || user.role !== "customer") return;
+
+  fetchUnreadCount();
+
+  const interval = setInterval(() => {
+    fetchUnreadCount();
+  }, 5000);
+
+  return () => clearInterval(interval);
+}, [user]);
 
 
   if (!user) {
@@ -41,7 +66,7 @@ function App() {
           className={`nav-button ${page === "inbox" ? "active" : ""}`}
           onClick={() => setPage("inbox")}
         >
-          Inbox
+          Inbox {unreadCount > 0 && `(${unreadCount})`}
         </button>
       )}
 
