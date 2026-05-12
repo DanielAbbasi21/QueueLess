@@ -58,3 +58,28 @@ exports.markAsRead = async (req, res) => {
   }
 };
 
+exports.getUnreadCount = async (req, res) => {
+  try {
+    if (req.user.role !== "customer") {
+      return res.status(403).json({
+        error: "Only customers can access notification count",
+      });
+    }
+
+    const count = await Notification.countDocuments({
+      user: req.user.userId,
+      read: false,
+    });
+
+    res.json({ count });
+  } catch (err) {
+    res.status(500).json({
+      error: "Failed to fetch unread notification count",
+      details: err.message,
+    });
+  }
+};
+
+
+
+

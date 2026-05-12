@@ -143,3 +143,11 @@ export const markNotificationAsRead = async (id) => {
   return res.json();
 };
 
+export const getUnreadNotificationCount = async () => {
+  const res = await fetch(`${API}/notifications/unread-count`, {
+    headers: getAuthHeaders(),
+  });
+
+  return res.json();
+};
+
