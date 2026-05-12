@@ -125,3 +125,11 @@ export const getBusinesses = async () => {
   const res = await fetch(`${API}/businesses`);
   return res.json();
 };
+
+export const getMyNotifications = async () => {
+  const res = await fetch(`${API}/notifications/my`, {
+    headers: getAuthHeaders(),
+  });
+
+  return res.json();
+};
