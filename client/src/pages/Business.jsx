@@ -85,6 +85,24 @@ function Business() {
     (ticket) => ticket.status === "done" || ticket.status === "cancelled"
   );
 
+  const canCancelNoShow = (startedAt) => {
+    if (!startedAt) return false;
+
+    const fiveMinutes = 5 * 60 * 1000;
+    const startedTime = new Date(startedAt).getTime();
+
+    return Date.now() - startedTime >= fiveMinutes;
+  };
+
+  const getNoShowAvailableTime = (startedAt) => {
+    if (!startedAt) return "-";
+
+    const fiveMinutes = 5 * 60 * 1000;
+    const availableTime = new Date(new Date(startedAt).getTime() + fiveMinutes);
+
+    return availableTime.toLocaleString();
+  };
+
   const formatDate = (date) => {
     if (!date) return "-";
 
@@ -153,6 +171,13 @@ function Business() {
                 </p>
               )}
 
+              {t.started_at && (
+                <p>
+                  <b>No-show cancel available after:</b>{" "}
+                  {getNoShowAvailableTime(t.started_at)}
+                </p>
+              )}
+
 
               <div className="ticket-actions">
                 <button
@@ -162,14 +187,25 @@ function Business() {
                   Done
                 </button>
 
-
                 <button
                   className="dashboard-button danger"
                   onClick={() => handleCancel(t._id)}
+                  disabled={!canCancelNoShow(t.started_at)}
+                  title={
+                    canCancelNoShow(t.started_at)
+                      ? "Cancel this no-show ticket"
+                      : "You can cancel this ticket after 5 minutes"
+                  }
                 >
-                  Cancel
+                  Cancel No-show
                 </button>
               </div>
+
+{!canCancelNoShow(t.started_at) && (
+  <p className="helper-text">
+    You can cancel this active ticket if the customer has not arrived after 5 minutes.
+  </p>
+)}
             </div>
           ))}
         </div>
