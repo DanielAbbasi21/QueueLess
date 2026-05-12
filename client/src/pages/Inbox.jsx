@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getMyNotifications } from "../services/api";
+import { getMyNotifications, markNotificationAsRead } from "../services/api";
 
 function Inbox() {
   const [notifications, setNotifications] = useState([]);
@@ -18,6 +18,17 @@ function Inbox() {
     setNotifications(data);
     setLoading(false);
   };
+
+  const handleMarkAsRead = async (id) => {
+  const res = await markNotificationAsRead(id);
+
+  if (res.error) {
+    alert(res.error);
+    return;
+  }
+
+  fetchNotifications();
+};
 
   useEffect(() => {
     fetchNotifications();
@@ -66,6 +77,17 @@ function Inbox() {
             <p>
               <b>Read:</b> {notification.read ? "Yes" : "No"}
             </p>
+
+            {!notification.read && (
+              <div className="ticket-actions">
+                <button
+                  className="dashboard-button"
+                  onClick={() => handleMarkAsRead(notification._id)}
+                >
+                  Mark as read
+                </button>
+              </div>
+            )}
 
             <p>
               <b>Created:</b>{" "}

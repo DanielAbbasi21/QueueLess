@@ -133,3 +133,13 @@ export const getMyNotifications = async () => {
 
   return res.json();
 };
+
+export const markNotificationAsRead = async (id) => {
+  const res = await fetch(`${API}/notifications/read/${id}`, {
+    method: "PUT",
+    headers: getAuthHeaders(),
+  });
+
+  return res.json();
+};
+
