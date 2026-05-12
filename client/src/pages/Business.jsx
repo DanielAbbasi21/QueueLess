@@ -341,6 +341,18 @@ function Business() {
                   <b>Cancelled:</b> {formatDate(t.cancelled_at)}
                 </p>
               )}
+
+              {t.cancelled_reason && (
+                <p>
+                  <b>Cancellation reason:</b> {t.cancelled_reason}
+                </p>
+              )}
+
+              {t.cancelled_by && (
+                <p>
+                  <b>Cancelled by:</b> {t.cancelled_by}
+                </p>
+              )}
             </div>
           ))}
         </div>
