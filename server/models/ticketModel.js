@@ -156,15 +156,17 @@ exports.doneTicket = async (id) => {
     .populate("business");
 };
 
-exports.cancelTicket = async (id) => {
+exports.cancelTicket = async (id, reason, cancelledBy) => {
   return await Ticket.findByIdAndUpdate(
     id,
     {
       status: "cancelled",
       cancelled_at: new Date(),
+      cancelled_reason: reason,
+      cancelled_by: cancelledBy,
     },
     { new: true }
   )
     .populate("user", "-password")
     .populate("business");
-}
+};

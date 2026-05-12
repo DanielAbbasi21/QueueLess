@@ -116,6 +116,8 @@ exports.doneTicket = async (req, res) => {
 
 exports.cancelTicket = async (req, res) => {
   try {
+    const reason = req.body?.reason;
+
     const ticket = await Ticket.findById(req.params.id);
 
     if (!ticket) {
@@ -149,6 +151,13 @@ exports.cancelTicket = async (req, res) => {
     }
 
     if (req.user.role === "business") {
+
+      if (!reason || reason.trim() === "") {
+        return res.status(400).json({
+          error: "Business must provide a reason for cancellation",
+        });
+      }
+
       if (ticket.business.toString() !== req.user.business) {
         return res.status(403).json({
           error: "You can only cancel tickets for your own business",
@@ -185,7 +194,16 @@ exports.cancelTicket = async (req, res) => {
       });
     }
 
-    const cancelled = await ticketModel.cancelTicket(req.params.id);
+    const cancelledReason = 
+      req.user.role === "business" 
+        ? reason.trim()
+        : "Cancelled by customer";
+    
+    const cancelled = await ticketModel.cancelTicket(
+      req.params.id, 
+      cancelledReason, 
+      req.user.role
+    );
 
     res.json(cancelled);
   } catch (err) {
