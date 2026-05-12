@@ -111,10 +111,11 @@ export const doneTicket = async (id) => {
   return res.json();
 };
 
-export const cancelTicket = async (id) => {
+export const cancelTicket = async (id, reason = "") => {
   const res = await fetch(`${API}/tickets/cancel/${id}`, {
     method: "PUT",
     headers: getAuthHeaders(),
+    body: JSON.stringify({ reason }),
   });
 
   return res.json();
