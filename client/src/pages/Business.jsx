@@ -66,16 +66,24 @@ function Business() {
   };
 
   const handleCancel = async (id) => {
-    const res = await cancelTicket(id);
+  const reason = prompt("Why are you cancelling this ticket?");
 
-    if (res.error) {
-      alert(res.error);
-      return;
-    }
+  if (!reason || reason.trim() === "") {
+    alert("Cancellation reason is required");
+    return;
+  }
 
-    fetchTickets();
-    alert("Ticket cancelled");
-  };
+  const res = await cancelTicket(id, reason.trim());
+
+  if (res.error) {
+    alert(res.error);
+    return;
+  }
+
+  fetchTickets();
+  alert("Ticket cancelled");
+};
+
 
   const activeTickets = tickets.filter((ticket) => ticket.status === "active");
 
