@@ -1,5 +1,6 @@
 const ticketModel = require("../models/ticketModel");
 const Ticket = require("../models/Ticket");
+const Notification = require("../models/Notification");
 
 exports.createTicket = async (req, res) => {
   const { user, business, message } = req.body;
@@ -204,6 +205,16 @@ exports.cancelTicket = async (req, res) => {
       cancelledReason, 
       req.user.role
     );
+
+    if (req.user.role === "business") {
+      await Notification.create({
+        user: ticket.user,
+        business: ticket.business,
+        ticket: ticket._id,
+        type: "ticket_cancelled",
+        message: `Your ticket for ${ticket.business.name} has been cancelled. Reason: ${cancelledReason}`,
+      });
+    }
 
     res.json(cancelled);
   } catch (err) {

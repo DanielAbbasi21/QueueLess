@@ -4,6 +4,7 @@ import Login from "./pages/Login";
 import Customer from "./pages/Customer";
 import Business from "./pages/Business";
 import Account from "./pages/Account";
+import Inbox from "./pages/Inbox";
 
 function App() {
   const [user, setUser] = useState(
@@ -34,6 +35,15 @@ function App() {
         >
           Dashboard
         </button>
+        
+      {user.role === "customer" && (
+        <button
+          className={`nav-button ${page === "inbox" ? "active" : ""}`}
+          onClick={() => setPage("inbox")}
+        >
+          Inbox
+        </button>
+      )}
 
         <button
           className={`nav-button ${page === "account" ? "active" : ""}`}
@@ -46,6 +56,8 @@ function App() {
 
 
     {page === "account" && <Account />}
+
+    {page === "inbox" && user.role === "customer" && <Inbox />}
 
     {page === "dashboard" && user.role === "customer" && <Customer />}
 
