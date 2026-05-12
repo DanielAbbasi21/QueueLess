@@ -30,6 +30,13 @@ const TicketSchema = new mongoose.Schema({
   completed_at: Date,
   
   cancelled_at: Date,
+
+  cancelled_reason: String,
+
+  cancelled_by: {
+    type: String,
+    enum: ["customer", "business"],
+  },
 });
 
 module.exports = mongoose.model("Ticket", TicketSchema);
