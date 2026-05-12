@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
-const NotificationSchema = new mongoose.Schema({
-  user: {
+const BusinessWarningSchema = new mongoose.Schema({
+  customer: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,
@@ -10,6 +10,7 @@ const NotificationSchema = new mongoose.Schema({
   business: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Business",
+    required: true,
   },
 
   ticket: {
@@ -17,27 +18,15 @@ const NotificationSchema = new mongoose.Schema({
     ref: "Ticket",
   },
 
-  type: {
-    type: String,
-    enum: [
-      "ticket_cancelled",
-      "ticket_created",
-      "ticket_started",
-      "ticket_done",
-      "customer_warned",
-      "customer_blocked"
-    ],
-    required: true,
-  },
-
-  message: {
+  reason: {
     type: String,
     required: true,
   },
 
-  read: {
-    type: Boolean,
-    default: false,
+  warned_by: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
   },
 
   created_at: {
@@ -46,4 +35,4 @@ const NotificationSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("Notification", NotificationSchema);
+module.exports = mongoose.model("BusinessWarning", BusinessWarningSchema);
