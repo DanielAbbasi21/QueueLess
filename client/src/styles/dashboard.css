@@ -220,3 +220,182 @@
 .notification-details p {
   margin-bottom: 8px;
 }
+
+.business-discovery {
+  padding: 28px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--social-bg);
+  box-shadow: var(--shadow);
+}
+
+.business-discovery-header {
+  text-align: center;
+  margin-bottom: 22px;
+}
+
+.business-search-wrapper {
+  max-width: 680px;
+  margin: 0 auto 26px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 16px;
+  border: 1px solid var(--accent-border);
+  border-radius: 14px;
+  background: var(--bg);
+}
+
+.business-search-icon {
+  color: var(--text);
+  font-size: 24px;
+}
+
+.business-search-input {
+  width: 100%;
+  padding: 16px 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--text-h);
+  font-size: 18px;
+}
+
+.business-card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.business-option-card {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 22px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--bg);
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+}
+
+.business-option-card:hover {
+  border-color: var(--accent-border);
+  transform: translateY(-1px);
+}
+
+.business-option-icon {
+  width: 58px;
+  height: 58px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--accent-bg);
+  color: var(--accent);
+  font-size: 28px;
+  flex: 0 0 auto;
+}
+
+.business-option-content {
+  flex: 1;
+}
+
+.business-option-content h4 {
+  margin: 0 0 4px;
+  color: var(--text-h);
+  font-size: 18px;
+}
+
+.business-option-content p {
+  color: var(--text);
+  font-size: 14px;
+}
+
+.business-option-arrow {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text-h);
+  font-size: 28px;
+}
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(6px);
+}
+
+.ticket-modal {
+  position: relative;
+  width: min(560px, 100%);
+  padding: 28px;
+  border: 1px solid var(--accent-border);
+  border-radius: 22px;
+  background: var(--bg);
+  box-shadow: var(--shadow);
+  text-align: left;
+}
+
+.modal-close-button {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-h);
+  font-size: 26px;
+  cursor: pointer;
+}
+
+.modal-close-button:hover {
+  border-color: var(--accent-border);
+  color: var(--accent);
+}
+
+.ticket-modal-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 18px;
+  padding-right: 42px;
+}
+
+.ticket-modal-header h3 {
+  margin: 0 0 4px;
+  color: var(--text-h);
+}
+
+.ticket-modal-header p {
+  color: var(--text);
+}
+
+.modal-helper-text {
+  margin-bottom: 18px;
+  color: var(--text);
+}
+
+.modal-actions {
+  justify-content: flex-end;
+  margin-top: 18px;
+}
+
+@media (max-width: 900px) {
+  .business-card-grid {
+    grid-template-columns: 1fr;
+  }
+}

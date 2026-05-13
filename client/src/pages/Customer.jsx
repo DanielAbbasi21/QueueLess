@@ -4,12 +4,15 @@ import { getBusinesses, createTicket, getMyTickets, cancelTicket, editTicket } f
 function Customer() {
   const [businesses, setBusinesses] = useState([]);
   const [tickets, setTickets] = useState([]);
-  const [message, setMessage] = useState("");
-  const [selectedBusiness, setSelectedBusiness] = useState("");
+  const [ticketMessage, setTicketMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const [openTicketId, setOpenTicketId] = useState(null);
   const [ticketBusinessFilter, setTicketBusinessFilter] = useState("");
   
+  const [businessSearch, setBusinessSearch] = useState("");
+  const [selectedBusinessForTicket, setSelectedBusinessForTicket] = useState(null);
+  const [showTicketModal, setShowTicketModal] = useState(false);
+
 
   const user = JSON.parse(localStorage.getItem("user") || "null");
 
@@ -58,20 +61,20 @@ function Customer() {
       return;
     }
 
-    if (!selectedBusiness) {
+    if (!selectedBusinessForTicket) {
       alert("Please select a business");
       return;
     }
 
-    if (!message) {
+    if (!ticketMessage.trim()) {
       alert("Please write a message");
       return;
     }
 
     const res = await createTicket({
       user: user._id,
-      business: selectedBusiness,
-      message: message,
+      business: selectedBusinessForTicket._id,
+      message: ticketMessage,
     });
 
     console.log("Saved:", res);
@@ -81,8 +84,9 @@ function Customer() {
       return;
     }
 
-    setMessage("");
-    setSelectedBusiness("");
+    setTicketMessage("");
+    setSelectedBusinessForTicket(null);
+    setShowTicketModal(false);
 
     await fetchMyTickets();
 
@@ -144,8 +148,45 @@ function Customer() {
     return new Date(date).toLocaleString();
   };
 
+  const getBusinessIcon = (businessName = "") => {
+    const name = businessName.toLowerCase();
+
+
+    if (name.includes("bank")) return "🏦";
+    if (name.includes("barber")) return "✂️";
+    if (name.includes("hospital")) return "✚";
+
+
+    return "🏢";
+  };
+
+
+  const getBusinessCategory = (businessName = "") => {
+    const name = businessName.toLowerCase();
+
+
+    if (name.includes("bank")) return "Banking & Financial Services";
+    if (name.includes("barber")) return "Personal Care & Grooming";
+    if (name.includes("hospital")) return "Healthcare & Medical Services";
+
+
+    return "Business Services";
+  };
+
+
+  const filteredBusinesses = businesses.filter((business) =>
+    business.name.toLowerCase().includes(businessSearch.toLowerCase())
+  );
+
+
   const toggleTicket = (id) => {
     setOpenTicketId(openTicketId === id ? null : id);
+  };
+
+  const closeTicketModal = () => {
+    setShowTicketModal(false);
+    setSelectedBusinessForTicket(null);
+    setTicketMessage("");
   };
 
   return (
@@ -155,67 +196,54 @@ function Customer() {
       </div>
 
 
-      <section className="dashboard-section">
-        <h3 className="section-title">Create Ticket</h3>
+      <section className="dashboard-section business-discovery">
+        <div className="business-discovery-header">
+          <h3 className="section-title">Find a Business</h3>
+          <p className="dashboard-subtitle">
+            Search for a business to get started or browse available options below.
+          </p>
+        </div>
 
+        <div className="business-search-wrapper">
+          <span className="business-search-icon">⌕</span>
 
-        <div className="form-card">
-          <div className="form-group">
-            <select
-              className="dashboard-select"
-              value={selectedBusiness}
-              onChange={(e) => setSelectedBusiness(e.target.value)}
+          <input
+            className="business-search-input"
+            type="text"
+            placeholder="Search for a business..."
+            value={businessSearch}
+            onChange={(e) => setBusinessSearch(e.target.value)}
+          />
+        </div>
+
+        <div className="business-card-grid">
+          {filteredBusinesses.map((business) => (
+            <button
+              className="business-option-card"
+              key={business._id}
+              type="button"
+              onClick={() => {
+                setSelectedBusinessForTicket(business);
+                setShowTicketModal(true);
+              }}
             >
-              <option value="">Select a business</option>
+              <div className="business-option-icon">
+                {getBusinessIcon(business.name)}
+              </div>
 
+              <div className="business-option-content">
+                <h4>{business.name}</h4>
+                <p>{getBusinessCategory(business.name)}</p>
+              </div>
 
-              {businesses.map((b) => (
-                <option key={b._id} value={b._id}>
-                  {b.name}
-                </option>
-              ))}
-            </select>
-
-
-            <textarea
-              className="dashboard-textarea"
-              placeholder="What do you need help with?"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-            />
-
-
-            <button className="dashboard-button" onClick={handleSubmit}>
-              Submit Ticket
+              <span className="business-option-arrow">›</span>
             </button>
-          </div>
+          ))}
         </div>
-      </section>
 
-      <section className="dashboard-section">
-        <h3 className="section-title">Filter Tickets</h3>
-
-        <div className="form-card">
-          <div className="form-group">
-            <select
-              className="dashboard-select"
-              value={ticketBusinessFilter}
-              onChange={(e) => setTicketBusinessFilter(e.target.value)}
-            >
-              <option value="">All businesses</option>
-
-              {[...new Map(
-                tickets
-                  .filter((ticket) => ticket.business?._id)
-                  .map((ticket) => [ticket.business._id, ticket.business])
-              ).values()].map((business) => (
-                <option key={business._id} value={business._id}>
-                  {business.name}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
+        {filteredBusinesses.length === 0 && (
+          <p className="empty-message">No businesses match your search.</p>
+        )}
       </section>
 
       <section className="dashboard-section">
@@ -379,6 +407,66 @@ function Customer() {
           ))}
         </div>
       </section>
+      {showTicketModal && selectedBusinessForTicket && (
+        <div className="modal-overlay">
+          <div className="ticket-modal">
+            <button
+              className="modal-close-button"
+              type="button"
+              onClick={closeTicketModal}
+            >
+              ×
+            </button>
+
+            <div className="ticket-modal-header">
+              <div className="business-option-icon">
+                {getBusinessIcon(selectedBusinessForTicket.name)}
+              </div>
+
+              <div>
+                <h3>Create ticket for {selectedBusinessForTicket.name}</h3>
+                <p>{getBusinessCategory(selectedBusinessForTicket.name)}</p>
+              </div>
+            </div>
+
+            <p className="modal-helper-text">
+              Tell us what you need help with and we will notify you when it is your turn.
+            </p>
+
+            <div className="form-group">
+              <label>Message</label>
+
+              <textarea
+                className="dashboard-textarea"
+                placeholder="Describe what you need help with..."
+                value={ticketMessage}
+                onChange={(e) => setTicketMessage(e.target.value)}
+                maxLength={500}
+              />
+
+              <p className="helper-text">{ticketMessage.length} / 500</p>
+            </div>
+
+            <div className="ticket-actions modal-actions">
+              <button
+                className="dashboard-button secondary"
+                type="button"
+                onClick={closeTicketModal}
+              >
+                Cancel
+              </button>
+
+              <button
+                className="dashboard-button"
+                type="button"
+                onClick={handleSubmit}
+              >
+                Submit Ticket
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
