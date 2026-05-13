@@ -11,6 +11,7 @@ import {
 function Business() {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [openTicketId, setOpenTicketId] = useState(null);
 
   const user = JSON.parse(localStorage.getItem("user") || "null");
 
@@ -164,15 +165,15 @@ function Business() {
     return new Date(date).toLocaleString();
   };
 
+  const toggleTicket = (id) => {
+    setOpenTicketId((currentId) => (currentId === id ? null : id));
+  };
+
   return (
     <div className="dashboard-page">
       <div className="dashboard-header">
         <h2 className="dashboard-title">Business Dashboard</h2>
-        <p className="dashboard-subtitle">
-          Manage your queue and customer tickets.
-        </p>
       </div>
-
 
       {loading && <p className="empty-message">Loading tickets...</p>}
 
@@ -192,88 +193,95 @@ function Business() {
 
         <div className="ticket-grid">
           {activeTickets.map((t) => (
-            <div className="ticket-card" key={t._id}>
-              <p>
-                <b>User:</b> {t.user?.name}
-              </p>
-
-
-              <p>
-                <b>Business:</b> {t.business?.name}
-              </p>
-
-
-              <p>
-                <b>Message:</b> {t.message}
-              </p>
-
-
-              <p>
-                <b>Status:</b>{" "}
-                <span className={`status-badge status-${t.status}`}>
-                  {t.status}
-                </span>
-              </p>
-
-              <p>
-                  <b>Created:</b> {formatDate(t.created_at)}
-              </p>
-
-
-              {t.started_at && (
+            <div className="ticket-card clickable-card" key={t._id}>
+              <div onClick={() => toggleTicket(t._id)}>
                 <p>
-                  <b>Started:</b> {formatDate(t.started_at)}
+                  <b>User:</b> {t.user?.name}
                 </p>
-              )}
 
-              {t.started_at && (
                 <p>
-                  <b>No-show cancel available after:</b>{" "}
-                  {getNoShowAvailableTime(t.started_at)}
+                  <b>Status:</b>{" "}
+                  <span className={`status-badge status-${t.status}`}>
+                    {t.status}
+                  </span>
                 </p>
-              )}
 
-
-              <div className="ticket-actions">
-                <button
-                  className="dashboard-button"
-                  onClick={() => handleDone(t._id)}
-                >
-                  Done
-                </button>
-
-                <button
-                  className="dashboard-button danger"
-                  onClick={() => handleCancel(t._id)}
-                  disabled={!canCancelNoShow(t.started_at)}
-                  title={
-                    canCancelNoShow(t.started_at)
-                      ? "Cancel this no-show ticket"
-                      : "You can cancel this ticket after 5 minutes"
-                  }
-                >
-                  Cancel No-show
-                </button>
-                <button
-                  className="dashboard-button secondary"
-                  onClick={() => handleWarn(t)}
-                >
-                  Warn customer
-                </button>
-
-                <button
-                  className="dashboard-button danger"
-                  onClick={() => handleBlock(t)}
-                >
-                  Block customer
-                </button>
+                <p className="helper-text">
+                  {openTicketId === t._id ? "Click to hide details" : "Click to view details"}
+                </p>
               </div>
 
-{!canCancelNoShow(t.started_at) && (
-  <p className="helper-text">
-    You can cancel this active ticket if the customer has not arrived after 5 minutes.
-  </p>
-)}
+              {openTicketId === t._id && (
+                <>
+                  <p>
+                    <b>Business:</b> {t.business?.name}
+                  </p>
+
+                  <p>
+                    <b>Message:</b> {t.message}
+                  </p>
+
+                  <p>
+                      <b>Created:</b> {formatDate(t.created_at)}
+                  </p>
+
+
+                  {t.started_at && (
+                    <p>
+                      <b>Started:</b> {formatDate(t.started_at)}
+                    </p>
+                  )}
+
+                  {t.started_at && (
+                    <p>
+                      <b>No-show cancel available after:</b>{" "}
+                      {getNoShowAvailableTime(t.started_at)}
+                    </p>
+                  )}
+
+                  <div className="ticket-actions">
+                    <button
+                      className="dashboard-button"
+                      onClick={() => handleDone(t._id)}
+                    >
+                      Done
+                    </button>
+
+                    <button
+                      className="dashboard-button danger"
+                      onClick={() => handleCancel(t._id)}
+                      disabled={!canCancelNoShow(t.started_at)}
+                      title={
+                        canCancelNoShow(t.started_at)
+                          ? "Cancel this no-show ticket"
+                          : "You can cancel this ticket after 5 minutes"
+                      }
+                    >
+                      Cancel No-show
+                    </button>
+                    
+                    <button
+                      className="dashboard-button secondary"
+                      onClick={() => handleWarn(t)}
+                    >
+                      Warn customer
+                    </button>
+
+                    <button
+                      className="dashboard-button danger"
+                      onClick={() => handleBlock(t)}
+                    >
+                      Block customer
+                    </button>
+                  </div>
+
+                  {!canCancelNoShow(t.started_at) && (
+                    <p className="helper-text">
+                      You can cancel this active ticket if the customer has not arrived after 5 minutes.
+                    </p>
+                  )}
+                </>
+              )}
             </div>
           ))}
         </div>
@@ -291,144 +299,156 @@ function Business() {
 
         <div className="ticket-grid">
           {waitingTickets.map((t) => (
-            <div className="ticket-card" key={t._id}>
-              <p>
-                <b>User:</b> {t.user?.name}
-              </p>
+            <div className="ticket-card clickable-card" key={t._id}>
+              <div onClick={() => toggleTicket(t._id)}>
+                <p>
+                  <b>User:</b> {t.user?.name}
+                </p>
 
+                <p>
+                  <b>Status:</b>{" "}
+                  <span className={`status-badge status-${t.status}`}>
+                    {t.status}
+                  </span>
+                </p>
 
-              <p>
-                <b>Business:</b> {t.business?.name}
-              </p>
-
-
-              <p>
-                <b>Message:</b> {t.message}
-              </p>
-
-
-              <p>
-                <b>Status:</b>{" "}
-                <span className={`status-badge status-${t.status}`}>
-                  {t.status}
-                </span>
-              </p>
-
-
-              <p>
-                <b>Created:</b> {formatDate(t.created_at)}
-              </p>
-
-
-              <div className="ticket-actions">
-                <button
-                  className="dashboard-button"
-                  onClick={() => handleStart(t._id)}
-                >
-                  Start
-                </button>
-
-
-                <button
-                  className="dashboard-button danger"
-                  onClick={() => handleCancel(t._id)}
-                >
-                  Cancel
-                </button>
-                <button
-                  className="dashboard-button secondary"
-                  onClick={() => handleWarn(t)}
-                >
-                  Warn customer
-                </button>
-
-                <button
-                  className="dashboard-button danger"
-                  onClick={() => handleBlock(t)}
-                >
-                  Block customer
-                </button>
+                <p className="helper-text">
+                  {openTicketId === t._id ? "Click to hide details" : "Click to view details"}
+                </p>
               </div>
+
+              {openTicketId === t._id && (
+                <>
+                  <p>
+                    <b>Business:</b> {t.business?.name}
+                  </p>
+
+                  <p>
+                    <b>Message:</b> {t.message}
+                  </p>
+
+                  <p>
+                    <b>Created:</b> {formatDate(t.created_at)}
+                  </p>
+
+
+                  <div className="ticket-actions">
+                    <button
+                      className="dashboard-button"
+                      onClick={() => handleStart(t._id)}
+                    >
+                      Start
+                    </button>
+
+                    <button
+                      className="dashboard-button danger"
+                      onClick={() => handleCancel(t._id)}
+                    >
+                      Cancel
+                    </button>
+
+                    <button
+                      className="dashboard-button secondary"
+                      onClick={() => handleWarn(t)}
+                    >
+                      Warn customer
+                    </button>
+
+                    <button
+                      className="dashboard-button danger"
+                      onClick={() => handleBlock(t)}
+                    >
+                      Block customer
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
           ))}
         </div>
       </section>
 
 
-      <section className="dashboard-section">
-        <h3 className="section-title">Ticket History</h3>
+        <section className="dashboard-section">
+          <h3 className="section-title">Ticket History</h3>
 
 
-        {!loading && ticketHistory.length === 0 && (
-          <p className="empty-message">No completed or cancelled tickets yet.</p>
-        )}
+          {!loading && ticketHistory.length === 0 && (
+            <p className="empty-message">No completed or cancelled tickets yet.</p>
+          )}
 
 
-        <div className="ticket-grid">
-          {ticketHistory.map((t) => (
-            <div className="ticket-card" key={t._id}>
-              <p>
-                <b>User:</b> {t.user?.name}
-              </p>
+          <div className="ticket-grid">
+            {ticketHistory.map((t) => (
+              <div className="ticket-card clickable-card" key={t._id}>
+                <div onClick={() => toggleTicket(t._id)}>
+                  <p>
+                    <b>User:</b> {t.user?.name}
+                  </p>
+
+                  <p>
+                    <b>Status:</b>{" "}
+                    <span className={`status-badge status-${t.status}`}>
+                      {t.status}
+                    </span>
+                  </p>
+
+                  <p className="helper-text">
+                    {openTicketId === t._id ? "Click to hide details" : "Click to view details"}
+                  </p>
+                </div>
+
+                {openTicketId === t._id && (
+                  <>
+                    <p>
+                      <b>Business:</b> {t.business?.name}
+                    </p>
+
+                    <p>
+                      <b>Message:</b> {t.message}
+                    </p>
+
+                    <p>
+                      <b>Created:</b> {formatDate(t.created_at)}
+                    </p>
 
 
-              <p>
-                <b>Business:</b> {t.business?.name}
-              </p>
+                    {t.started_at && (
+                      <p>
+                        <b>Started:</b> {formatDate(t.started_at)}
+                      </p>
+                    )}
 
+                    {t.completed_at && (
+                      <p>
+                        <b>Completed:</b> {formatDate(t.completed_at)}
+                      </p>
+                    )}
 
-              <p>
-                <b>Message:</b> {t.message}
-              </p>
+                    {t.cancelled_at && (
+                      <p>
+                        <b>Cancelled:</b> {formatDate(t.cancelled_at)}
+                      </p>
+                    )}
 
+                    {t.cancelled_reason && (
+                      <p>
+                        <b>{t.status === "blocked" ? "Blocked reason:" : "Cancellation reason:"}</b> {" "}
+                        {t.cancelled_reason}
+                      </p>
+                    )}
 
-              <p>
-                <b>Status:</b>{" "}
-                <span className={`status-badge status-${t.status}`}>
-                  {t.status}
-                </span>
-              </p>
-
-
-              <p>
-                <b>Created:</b> {formatDate(t.created_at)}
-              </p>
-
-
-              {t.started_at && (
-                <p>
-                  <b>Started:</b> {formatDate(t.started_at)}
-                </p>
-              )}
-
-
-              {t.completed_at && (
-                <p>
-                  <b>Completed:</b> {formatDate(t.completed_at)}
-                </p>
-              )}
-
-
-              {t.cancelled_at && (
-                <p>
-                  <b>Cancelled:</b> {formatDate(t.cancelled_at)}
-                </p>
-              )}
-
-              {t.cancelled_reason && (
-                <p>
-                  <b>Cancellation reason:</b> {t.cancelled_reason}
-                </p>
-              )}
-
-              {t.cancelled_by && (
-                <p>
-                  <b>Cancelled by:</b> {t.cancelled_by}
-                </p>
-              )}
-            </div>
-          ))}
-        </div>
+                    {t.cancelled_by && (
+                      <p>
+                        <b>{t.status === "blocked" ? "Blocked By:" : "Cancelled By:"}</b> {" "}
+                        {t.cancelled_by}
+                      </p>
+                    )}
+                  </>
+                )}
+              </div>
+            ))}
+          </div>
       </section>
     </div>
   );

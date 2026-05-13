@@ -7,6 +7,7 @@ function Customer() {
   const [message, setMessage] = useState("");
   const [selectedBusiness, setSelectedBusiness] = useState("");
   const [loading, setLoading] = useState(true);
+  const [openTicketId, setOpenTicketId] = useState(null);
   
 
   const user = JSON.parse(localStorage.getItem("user") || "null");
@@ -134,13 +135,14 @@ function Customer() {
     return new Date(date).toLocaleString();
   };
 
+  const toggleTicket = (id) => {
+    setOpenTicketId(openTicketId === id ? null : id);
+  };
+
   return (
      <div className="dashboard-page">
       <div className="dashboard-header">
         <h2 className="dashboard-title">Customer Dashboard</h2>
-        <p className="dashboard-subtitle">
-          Create tickets and follow your queue status.
-        </p>
       </div>
 
 
@@ -194,62 +196,73 @@ function Customer() {
 
         <div className="ticket-grid">
           {currentTickets.map((t) => (
-            <div className="ticket-card" key={t._id}>
-              <p>
-                <b>Business:</b> {t.business?.name}
-              </p>
-
-
-              <p>
-                <b>Message:</b> {t.message}
-              </p>
-
-
-              <p>
-                <b>Status:</b>{" "}
-                <span className={`status-badge status-${t.status}`}>
-                  {t.status}
-                </span>
-              </p>
-
-
-              {t.status === "waiting" && (
-                <>
-                  <p>
-                    <b>Queue position:</b> {t.queuePosition}
-                  </p>
-
-
-                  <p>
-                    <b>Estimated wait:</b> {t.estimatedWaitTime} minutes
-                  </p>
-                </>
-              )}
-
-
-              {t.status === "active" && (
+            <div className="ticket-card clickable-card" key={t._id}>
+              <div onClick={() => toggleTicket(t._id)}>
                 <p>
-                  <b>Queue position:</b> Now serving
+                  <b>Business:</b> {t.business?.name}
                 </p>
-              )}
 
+                <p>
+                  <b>Status:</b>
+                  <span className={`status-badge status-${t.status}`}>
+                    {t.status}
+                  </span>
+                </p>
 
-              {t.status === "waiting" && (
-                <div className="ticket-actions">
-                  <button
-                    className="dashboard-button secondary"
-                    onClick={() => handleEdit(t)}
-                  >
-                    Edit Ticket
-                  </button>
-                  
-                  <button
-                    className="dashboard-button danger"
-                    onClick={() => handleCancel(t._id)}
-                  >
-                    Cancel Ticket
-                  </button>
+                <p className="helper-text">
+                  {openTicketId === t._id ? "Click to hide details" : "Click to view details"}
+                </p>
                 </div>
+
+                {openTicketId === t._id && (
+                <>
+                <p>
+                  <b>Message:</b> {t.message}
+                </p>
+
+                <p>
+                  <b>Created:</b> {formatDate(t.created_at)}
+                </p>
+
+
+                {t.status === "waiting" && (
+                  <>
+                    <p>
+                      <b>Queue position:</b> {t.queuePosition}
+                    </p>
+
+                    <p>
+                      <b>Estimated wait:</b> {t.estimatedWaitTime} minutes
+                    </p>
+                  </>
+                )}
+
+
+                {t.status === "active" && (
+                  <p>
+                    <b>Queue position:</b> Now serving
+                  </p>
+                )}
+
+
+                {t.status === "waiting" && (
+                  <div className="ticket-actions">
+                    <button
+                      className="dashboard-button secondary"
+                      onClick={() => handleEdit(t)}
+                    >
+                      Edit Ticket
+                    </button>
+                    
+                    <button
+                      className="dashboard-button danger"
+                      onClick={() => handleCancel(t._id)}
+                    >
+                      Cancel Ticket
+                    </button>
+                  </div>
+                )}
+              </>
               )}
             </div>
           ))}
@@ -267,54 +280,61 @@ function Customer() {
 
         <div className="ticket-grid">
           {ticketHistory.map((t) => (
-            <div className="ticket-card" key={t._id}>
-              <p>
-                <b>Business:</b> {t.business?.name}
-              </p>
-
-
-              <p>
-                <b>Message:</b> {t.message}
-              </p>
-
-
-              <p>
-                <b>Status:</b>{" "}
-                <span className={`status-badge status-${t.status}`}>
-                  {t.status}
-                </span>
-              </p>
-
-
-              <p>
-                <b>Created:</b> {formatDate(t.created_at)}
-              </p>
-
-
-              {t.completed_at && (
+            <div className="ticket-card clickable-card" key={t._id}>
+              <div onClick={() => toggleTicket(t._id)}>
                 <p>
-                  <b>Completed:</b> {formatDate(t.completed_at)}
+                  <b>Business:</b> {t.business?.name}
                 </p>
-              )}
 
-
-              {t.cancelled_at && (
                 <p>
-                  <b>Cancelled:</b> {formatDate(t.cancelled_at)}
+                  <b>Status:</b>{" "}
+                  <span className={`status-badge status-${t.status}`}>
+                    {t.status}
+                  </span>
                 </p>
-              )}
 
-              {t.cancelled_reason && (
-                <p>
-                  <b>Cancellation reason:</b> {t.cancelled_reason}
+                <p className="helper-text">
+                  {openTicketId === t._id ? "Click to hide details" : "Click to view details"}
                 </p>
-              )}
+                </div>
 
-              {t.cancelled_by && (
-                <p>
-                  <b>Cancelled by:</b> {t.cancelled_by}
-                </p>
-              )}
+                {openTicketId === t._id && (
+                  <>
+                    <p>
+                      <b>Message:</b> {t.message}
+                    </p>
+
+                    <p>
+                      <b>Created:</b> {formatDate(t.created_at)}
+                    </p>
+
+                    {t.completed_at && (
+                      <p>
+                        <b>Completed:</b> {formatDate(t.completed_at)}
+                      </p>
+                    )}
+
+                    {t.cancelled_at && (
+                      <p>
+                        <b>Cancelled:</b> {formatDate(t.cancelled_at)}
+                      </p>
+                    )}
+
+                    {t.cancelled_reason && (
+                      <p>
+                        <b>{t.status === "blocked" ? "Blocked reason:" : "Cancellation reason:"}</b> {" "}
+                        {t.cancelled_reason}
+                      </p>
+                    )}
+
+                    {t.cancelled_by && (
+                      <p>
+                        <b>{t.status === "blocked" ? "Blocked By:" : "Cancelled By:"}</b> {" "}
+                        {t.cancelled_by}
+                      </p>
+                    )}
+                  </>
+                )}
             </div>
           ))}
         </div>
