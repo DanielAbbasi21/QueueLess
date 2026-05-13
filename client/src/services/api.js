@@ -188,3 +188,14 @@ export const editTicket = async (id, message) => {
 
   return res.json();
 };
+
+export const unblockCustomer = async ({ customer }) => {
+  const res = await fetch(`${API}/business-actions/unblock`, {
+    method: "POST",
+    headers: getAuthHeaders(),
+    body: JSON.stringify({ customer }),
+  });
+
+  return res.json();
+};
+

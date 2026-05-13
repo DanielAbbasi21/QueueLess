@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getMyTickets, getBusinessTickets } from "../services/api";
+import { getMyTickets, getBusinessTickets, unblockCustomer} from "../services/api";
 
 function History({ user }) {
   const [tickets, setTickets] = useState([]);
@@ -56,6 +56,29 @@ function History({ user }) {
       : allTicketHistory.filter(
           (ticket) => ticket.status === historyStatusFilter
         );
+
+  const handleUnblock = async (ticket) => {
+    const confirmUnblock = window.confirm(
+      `Unblock ${ticket.user?.name || "this customer"}?`
+    );
+
+    if (!confirmUnblock) {
+      return;
+    }
+
+    const res = await unblockCustomer({
+      customer: ticket.user?._id,
+    });
+
+    if (res.error) {
+      alert(res.error);
+      return;
+    }
+
+    await fetchHistoryTickets();
+    alert("Customer unblocked");
+  };
+    
 
   return (
     <div className="dashboard-page">
@@ -167,7 +190,7 @@ function History({ user }) {
                     {formatDate(t.cancelled_at)}
                   </p>
                 )}
-
+                
                 {t.cancelled_reason && (
                   <p>
                     <b>
@@ -188,6 +211,17 @@ function History({ user }) {
                     </b>{" "}
                     {t.cancelled_by}
                   </p>
+                )}
+
+                {user.role === "business" && t.status === "blocked" && (
+                  <div className="ticket-actions">
+                    <button
+                      className="dashboard-button secondary"
+                      onClick={() => handleUnblock(t)}
+                    >
+                      Unblock customer
+                    </button>
+                  </div>
                 )}
               </>
             )}
