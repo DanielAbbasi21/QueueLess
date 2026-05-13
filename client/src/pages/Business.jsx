@@ -12,6 +12,7 @@ function Business() {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [openTicketId, setOpenTicketId] = useState(null);
+  const [historyStatusFilter, setHistoryStatusFilter] = useState("all");
 
   const user = JSON.parse(localStorage.getItem("user") || "null");
 
@@ -140,6 +141,13 @@ function Business() {
   const ticketHistory = tickets.filter(
     (ticket) => ticket.status === "done" || ticket.status === "cancelled" || ticket.status === "blocked"
   );
+
+  const ticketHistoryFiltered = 
+    historyStatusFilter === "all"
+      ? ticketHistory
+      : ticketHistory.filter(
+        (ticket) => ticket.status === historyStatusFilter
+      );
 
   const canCancelNoShow = (startedAt) => {
     if (!startedAt) return false;
@@ -371,7 +379,39 @@ function Business() {
 
         <section className="dashboard-section">
           <h3 className="section-title">Ticket History</h3>
+            <div className="history-filter">
+              <button
+                className={`filter-button ${historyStatusFilter === "all" ? "active" : ""}`}
+                onClick={() => setHistoryStatusFilter("all")}
+              >
+                All
+              </button>
 
+              <button
+                className={`filter-button ${historyStatusFilter === "done" ? "active" : ""}`}
+                onClick={() => setHistoryStatusFilter("done")}
+              >
+                Done
+              </button>
+
+              <button
+                className={`filter-button ${
+                  historyStatusFilter === "cancelled" ? "active" : ""
+                }`}
+                onClick={() => setHistoryStatusFilter("cancelled")}
+              >
+                Cancelled
+              </button>
+
+              <button
+                className={`filter-button ${
+                  historyStatusFilter === "blocked" ? "active" : ""
+                }`}
+                onClick={() => setHistoryStatusFilter("blocked")}
+              >
+                Blocked
+              </button>
+            </div>
 
           {!loading && ticketHistory.length === 0 && (
             <p className="empty-message">No completed or cancelled tickets yet.</p>
