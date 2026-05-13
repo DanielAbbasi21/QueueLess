@@ -46,10 +46,9 @@
   padding: 18px;
   border: 1px solid var(--border);
   border-radius: 16px;
-  background: var(--social-bg);
+  background: var(--card-bg);
   box-shadow: var(--shadow);
 }
-
 
 .ticket-actions {
   display: flex;
@@ -82,7 +81,7 @@
   padding: 22px;
   border: 1px solid var(--border);
   border-radius: 18px;
-  background: var(--social-bg);
+  background: var(--card-bg);
   box-shadow: var(--shadow);
 }
 
@@ -114,7 +113,7 @@
   padding: 10px 16px;
   border: 1px solid var(--accent-border);
   border-radius: 12px;
-  background: var(--accent);
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
   color: white;
   font-weight: 600;
 }
@@ -128,11 +127,13 @@
   color: var(--accent);
 }
 
+
 .dashboard-button.danger {
-  background: #dc2626;
-  border-color: #dc2626;
+  background: var(--danger);
+  border-color: var(--danger);
   color: white;
 }
+
 .app-nav {
   position: sticky;
   top: 0;
@@ -143,13 +144,24 @@
   gap: 16px;
   padding: 14px 24px;
   border-bottom: 1px solid var(--border);
-  background: var(--bg);
+  background: rgba(7, 11, 22, 0.82);
+  backdrop-filter: blur(14px);
 }
 
 .app-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   font-weight: 700;
   color: var(--text-h);
   letter-spacing: -0.3px;
+}
+
+.app-logo {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  display: block;
 }
 
 .app-nav-actions {
@@ -172,8 +184,8 @@
 }
 
 .nav-button.active {
-  background: var(--accent);
-  border-color: var(--accent);
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  border-color: transparent;
   color: white;
 }
 
@@ -225,9 +237,12 @@
   padding: 28px;
   border: 1px solid var(--border);
   border-radius: 18px;
-  background: var(--social-bg);
+  background:
+    linear-gradient(135deg, rgba(56, 189, 248, 0.08), rgba(139, 92, 246, 0.08)),
+    var(--card-bg);
   box-shadow: var(--shadow);
 }
+
 
 .business-discovery-header {
   text-align: center;
@@ -275,7 +290,7 @@
   padding: 22px;
   border: 1px solid var(--border);
   border-radius: 18px;
-  background: var(--bg);
+  background: rgba(7, 11, 22, 0.72);
   color: var(--text);
   text-align: left;
   cursor: pointer;
@@ -293,7 +308,7 @@
   display: grid;
   place-items: center;
   border-radius: 999px;
-  background: var(--accent-bg);
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.18), rgba(139, 92, 246, 0.18));
   color: var(--accent);
   font-size: 28px;
   flex: 0 0 auto;
@@ -434,4 +449,26 @@
   flex-wrap: wrap;
   margin-bottom: 18px;
 }
+
+.estimated-wait-preview {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0 0 18px;
+  padding: 14px 16px;
+  border: 1px solid var(--accent-border);
+  border-radius: 14px;
+  background: var(--accent-bg);
+  color: var(--text);
+}
+
+.estimated-wait-preview span {
+  font-weight: 600;
+}
+
+.estimated-wait-preview strong {
+  color: var(--text-h);
+}
+
 

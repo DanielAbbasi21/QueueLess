@@ -52,7 +52,10 @@ useEffect(() => {
   return (
   <div>
     <nav className="app-nav">
-      <div className="app-brand">QueueLess</div>
+      <div className="app-brand">
+        <img src="/favicon.svg" alt="QueueLess logo" className="app-logo" />
+        <span>QueueLess</span>
+      </div>
 
       <div className="app-nav-actions">
         <button

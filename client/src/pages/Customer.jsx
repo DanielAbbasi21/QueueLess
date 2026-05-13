@@ -210,6 +210,22 @@ function Customer() {
     setTicketMessage("");
   };
 
+  const getEstimatedWaitForBusiness = (businessId) => {
+  if (!businessId) return 5;
+
+  const waitingTicketsForBusiness = tickets.filter(
+    (ticket) =>
+      ticket.business?._id === businessId && ticket.status === "waiting"
+  );
+
+  return (waitingTicketsForBusiness.length + 1) * 5;
+};
+
+const estimatedWaitBeforeSubmit = selectedBusinessForTicket
+  ? getEstimatedWaitForBusiness(selectedBusinessForTicket._id)
+  : 5;
+
+
   return (
      <div className="dashboard-page">
       <div className="dashboard-header">
@@ -402,6 +418,11 @@ function Customer() {
             <p className="modal-helper-text">
               Tell us what you need help with and we will notify you when it is your turn.
             </p>
+
+            <div className="estimated-wait-preview">
+              <span>Estimated wait</span>
+              <strong>{estimatedWaitBeforeSubmit} minutes</strong>
+            </div>
 
             <div className="form-group">
               <label>Message</label>

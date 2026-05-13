@@ -1,16 +1,24 @@
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
+  --text: #a7b0c5;
+  --text-h: #f8fbff;
+  --bg: #070b16;
+  --border: rgba(96, 165, 250, 0.18);
+  --code-bg: #0f172a;
+
+  --accent: #38bdf8;
+  --accent-2: #8b5cf6;
+  --accent-bg: rgba(56, 189, 248, 0.12);
+  --accent-border: rgba(56, 189, 248, 0.45);
+  --accent-hover: rgba(139, 92, 246, 0.65);
+
+  --social-bg: rgba(15, 23, 42, 0.72);
+  --card-bg: rgba(15, 23, 42, 0.86);
+  --danger: #ef4444;
+  --danger-bg: rgba(239, 68, 68, 0.12);
+
   --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px,
-    rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+    rgba(0, 0, 0, 0.45) 0 18px 45px -18px,
+    rgba(56, 189, 248, 0.12) 0 0 30px -12px;
 
   --sans: system-ui, "Segoe UI", Roboto, sans-serif;
   --heading: system-ui, "Segoe UI", Roboto, sans-serif;
@@ -18,7 +26,7 @@
 
   font: 18px/145% var(--sans);
   letter-spacing: 0.18px;
-  color-scheme: light dark;
+  color-scheme: dark;
   color: var(--text);
   background: var(--bg);
   font-synthesis: none;
@@ -33,7 +41,7 @@
   }
 }
 
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   :root {
     --text: #9ca3af;
     --text-h: #f3f4f6;
@@ -48,7 +56,7 @@
       rgba(0, 0, 0, 0.4) 0 10px 15px -3px,
       rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
   }
-}
+} */
 
 * {
   box-sizing: border-box;
@@ -56,7 +64,10 @@
 
 body {
   margin: 0;
-  background: var(--bg);
+  background:
+    radial-gradient(circle at top left, rgba(56, 189, 248, 0.14), transparent 34%),
+    radial-gradient(circle at top right, rgba(139, 92, 246, 0.14), transparent 30%),
+    var(--bg);
   color: var(--text);
 }
 

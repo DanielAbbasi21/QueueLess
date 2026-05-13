@@ -6,6 +6,7 @@ import {
   cancelTicket,
   warnCustomer,
   blockCustomer,
+  unblockCustomer
 } from "../services/api";
 
 function Business() {
@@ -132,6 +133,27 @@ function Business() {
     alert("Customer blocked");
   };
 
+  const handleUnblock = async (ticket) => {
+  const confirmUnblock = window.confirm(
+    `Unblock ${ticket.user?.name || "this customer"}?`
+  );
+
+  if (!confirmUnblock) {
+    return;
+  }
+
+  const res = await unblockCustomer({
+    customer: ticket.user?._id,
+  });
+
+  if (res.error) {
+    alert(res.error);
+    return;
+  }
+
+  await fetchTickets();
+  alert("Customer unblocked");
+};
 
   const activeTickets = tickets.filter((ticket) => ticket.status === "active");
 

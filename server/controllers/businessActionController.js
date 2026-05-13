@@ -183,3 +183,63 @@ exports.blockCustomer = async (req, res) => {
       });
     }
   };
+
+  exports.unblockCustomer = async (req, res) => {
+  try {
+    const { customer } = req.body;
+
+    if (req.user.role !== "business") {
+      return res.status(403).json({
+        error: "Only business users can unblock customers",
+      });
+    }
+
+    if (!customer) {
+      return res.status(400).json({
+        error: "Customer is required",
+      });
+    }
+
+    const existingBlock = await BusinessBlock.findOne({
+      customer,
+      business: req.user.business,
+    });
+
+    if (!existingBlock) {
+      return res.status(404).json({
+        error: "Customer is not blocked by this business",
+      });
+    }
+
+    await BusinessBlock.findByIdAndDelete(existingBlock._id);
+
+    await Ticket.updateMany(
+      {
+        user: customer,
+        business: req.user.business,
+        status: "blocked",
+      },
+      {
+        status: "cancelled",
+        cancelled_reason: "Customer was unblocked. Ticket moved from blocked to cancelled.",
+        cancelled_by: "business",
+      }
+    );
+
+    await Notification.create({
+      user: customer,
+      business: req.user.business,
+      type: "customer_unblocked",
+      message: "You have been unblocked by this business.",
+    });
+
+    res.json({
+      message: "Customer unblocked",
+    });
+  } catch (err) {
+    res.status(500).json({
+      error: "Failed to unblock customer",
+      details: err.message,
+    });
+  }
+};
