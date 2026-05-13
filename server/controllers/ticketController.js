@@ -1,6 +1,7 @@
 const ticketModel = require("../models/ticketModel");
 const Ticket = require("../models/Ticket");
 const Notification = require("../models/Notification");
+const BusinessBlock = require("../models/BusinessBlock");
 
 exports.createTicket = async (req, res) => {
   const { user, business, message } = req.body;
@@ -12,6 +13,17 @@ exports.createTicket = async (req, res) => {
 
     if (!business) {
       return res.status(400).json({ error: "Business is required" });
+    }
+
+    const existingBlock = await BusinessBlock.findOne({
+      customer: user,
+      business,
+    });
+
+    if (existingBlock) {
+      return res.status(403).json({
+        error: "You are blocked from creating tickets for this business",
+      });
     }
 
     const ticket = await ticketModel.createTicket(user, business, message);

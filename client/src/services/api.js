@@ -151,3 +151,30 @@ export const getUnreadNotificationCount = async () => {
   return res.json();
 };
 
+export const warnCustomer = async ({ customer, ticket, reason }) => {
+  const res = await fetch(`${API}/business-actions/warn`, {
+    method: "POST",
+    headers: getAuthHeaders(),
+    body: JSON.stringify({
+      customer,
+      ticket,
+      reason,
+    }),
+  });
+
+  return res.json();
+};
+
+export const blockCustomer = async ({ customer, ticket, reason }) => {
+  const res = await fetch(`${API}/business-actions/block`, {
+    method: "POST",
+    headers: getAuthHeaders(),
+    body: JSON.stringify({
+      customer,
+      ticket,
+      reason,
+    }),
+  });
+
+  return res.json();
+};

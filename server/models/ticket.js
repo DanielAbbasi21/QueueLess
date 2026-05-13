@@ -17,7 +17,7 @@ const TicketSchema = new mongoose.Schema({
 
   status: {
     type: String,
-    enum: ["waiting", "active", "done", "cancelled"],
+    enum: ["waiting", "active", "done", "cancelled", "blocked"],
     default: "waiting",
   },
 
