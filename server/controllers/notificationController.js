@@ -32,22 +32,26 @@ exports.markAsRead = async (req, res) => {
       });
     }
 
-    const notification = await Notification.findById(req.params.id);
+    const notification = await Notification.findOneAndUpdate(
+      {
+        _id: req.params.id,
+        user: req.user.userId,
+      },
+      {
+        read: true,
+      },
+      {
+        new: true,
+      }
+    )
+      .populate("business")
+      .populate("ticket");
 
     if (!notification) {
       return res.status(404).json({
-        error: "Notification not found",
+        error: "Notification not found or does not belong to you",
       });
     }
-
-    if (notification.user.toString() !== req.user.userId) {
-      return res.status(403).json({
-        error: "You can only update your own notifications",
-      });
-    }
-
-    notification.read = true;
-    await notification.save();
 
     res.json(notification);
   } catch (err) {

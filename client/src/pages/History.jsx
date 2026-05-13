@@ -78,6 +78,14 @@ function History({ user }) {
     await fetchHistoryTickets();
     alert("Customer unblocked");
   };
+
+  const getReasonText = (reason = "") => {
+    if (!reason.includes("Reason:")) {
+      return reason;
+    }
+
+    return reason.split("Reason:").pop().trim();
+  };
     
 
   return (
@@ -191,14 +199,9 @@ function History({ user }) {
                   </p>
                 )}
                 
-                {t.cancelled_reason && (
+                {t.status === "blocked" && t.cancelled_reason && (
                   <p>
-                    <b>
-                      {t.status === "blocked"
-                        ? "Blocked reason:"
-                        : "Cancellation reason:"}
-                    </b>{" "}
-                    {t.cancelled_reason}
+                    <b>Reason:</b> {getReasonText(t.cancelled_reason)}
                   </p>
                 )}
 
