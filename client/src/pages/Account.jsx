@@ -45,37 +45,36 @@ function Account() {
   };
 
   return (
-    <div className="dashboard-page">
-      <div className="dashboard-header">
+    <div className="dashboard-page account-page">
+      <div className="account-header">
         <h2 className="dashboard-title">Account</h2>
         <p className="dashboard-subtitle">
           View your account information.
         </p>
       </div>
 
+      <div className="account-card centered-account-card">
+        <div className="account-avatar">
+          {user.name?.charAt(0).toUpperCase()}
+        </div>
 
-      <div className="account-card">
-        <p>
-          <b>Name:</b> {user.name}
-        </p>
+        <h3 className="account-name">{user.name}</h3>
 
-
-        <p>
-          <b>Email:</b> {user.email}
-        </p>
-
-
-        <p>
-          <b>Role:</b> {user.role}
-        </p>
-
-
-        {user.role === "business" && (
+        <div className="account-info">
           <p>
-            <b>Business:</b> {user.business?.name}
+            <b>Email:</b> {user.email}
           </p>
-        )}
 
+          <p>
+            <b>Role:</b> {user.role}
+          </p>
+
+          {user.role === "business" && (
+            <p>
+              <b>Business:</b> {user.business?.name}
+            </p>
+          )}
+        </div>
 
         <button className="dashboard-button danger" onClick={handleLogout}>
           Logout

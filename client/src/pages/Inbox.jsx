@@ -22,17 +22,6 @@ function Inbox() {
     setLoading(false);
   };
 
-  const handleMarkAsRead = async (id) => {
-  const res = await markNotificationAsRead(id);
-
-  if (res.error) {
-    alert(res.error);
-    return;
-  }
-
-  fetchNotifications();
-};
-
   useEffect(() => {
     fetchNotifications();
 
