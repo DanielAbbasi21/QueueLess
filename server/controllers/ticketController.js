@@ -286,3 +286,50 @@ exports.getBusinessTickets = async (req, res) => {
     });
   }
 };
+
+exports.editTicket = async (req, res) => {
+  try {
+    const { message } = req.body;
+
+    if (req.user.role !== "customer") {
+      return res.status(403).json({
+        error: "Only customers can edit tickets",
+      });
+    }
+
+    if (!message || message.trim() === "") {
+      return res.status(400).json({
+        error: "Message is required",
+      });
+    }
+
+    const ticket = await Ticket.findById(req.params.id);
+
+    if (!ticket) {
+      return res.status(404).json({
+        error: "Ticket not found",
+      });
+    }
+
+    if (ticket.user.toString() !== req.user.userId) {
+      return res.status(403).json({
+        error: "You can only edit your own tickets",
+      });
+    }
+
+    if (ticket.status !== "waiting") {
+      return res.status(400).json({
+        error: "Only waiting tickets can be edited",
+      });
+    }
+
+    const updated = await ticketModel.editTicket(req.params.id, message.trim());
+
+    res.json(updated);
+  } catch (err) {
+    res.status(500).json({
+      error: "Failed to edit ticket",
+      details: err.message,
+    });
+  }
+};

@@ -178,3 +178,13 @@ export const blockCustomer = async ({ customer, ticket, reason }) => {
 
   return res.json();
 };
+
+export const editTicket = async (id, message) => {
+  const res = await fetch(`${API}/tickets/edit/${id}`, {
+    method: "PUT",
+    headers: getAuthHeaders(),
+    body: JSON.stringify({ message }),
+  });
+
+  return res.json();
+};
