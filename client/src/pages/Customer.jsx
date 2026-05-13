@@ -203,27 +203,11 @@ function Customer() {
                 </p>
 
                 <p>
-                  <b>Status:</b>
+                  <b>Status:</b>{" "}
                   <span className={`status-badge status-${t.status}`}>
                     {t.status}
                   </span>
                 </p>
-
-                <p className="helper-text">
-                  {openTicketId === t._id ? "Click to hide details" : "Click to view details"}
-                </p>
-                </div>
-
-                {openTicketId === t._id && (
-                <>
-                <p>
-                  <b>Message:</b> {t.message}
-                </p>
-
-                <p>
-                  <b>Created:</b> {formatDate(t.created_at)}
-                </p>
-
 
                 {t.status === "waiting" && (
                   <>
@@ -244,25 +228,47 @@ function Customer() {
                   </p>
                 )}
 
+                <p className="helper-text">
+                  {openTicketId === t._id
+                    ? "Click to hide details"
+                    : "Click to view details"}
+                </p>
+              </div>
 
-                {t.status === "waiting" && (
-                  <div className="ticket-actions">
-                    <button
-                      className="dashboard-button secondary"
-                      onClick={() => handleEdit(t)}
-                    >
-                      Edit Ticket
-                    </button>
-                    
-                    <button
-                      className="dashboard-button danger"
-                      onClick={() => handleCancel(t._id)}
-                    >
-                      Cancel Ticket
-                    </button>
-                  </div>
-                )}
-              </>
+              {openTicketId === t._id && (
+                <>
+                  <p>
+                    <b>Message:</b> {t.message}
+                  </p>
+
+                  <p>
+                    <b>Created:</b> {formatDate(t.created_at)}
+                  </p>
+
+                  {t.status === "waiting" && (
+                    <p>
+                      <b>Estimated wait:</b> {t.estimatedWaitTime} minutes
+                    </p>
+                  )}
+
+                  {t.status === "waiting" && (
+                    <div className="ticket-actions">
+                      <button
+                        className="dashboard-button secondary"
+                        onClick={() => handleEdit(t)}
+                      >
+                        Edit Ticket
+                      </button>
+
+                      <button
+                        className="dashboard-button danger"
+                        onClick={() => handleCancel(t._id)}
+                      >
+                        Cancel Ticket
+                      </button>
+                    </div>
+                  )}
+                </>
               )}
             </div>
           ))}

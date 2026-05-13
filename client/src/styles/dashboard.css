@@ -190,3 +190,33 @@
 .clickable-card:hover {
   border-color: var(--accent-hover);
 }
+
+.notification-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.notification-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.unread-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: #2563eb;
+  flex: 0 0 auto;
+}
+
+.notification-details {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.notification-details p {
+  margin-bottom: 8px;
+}
