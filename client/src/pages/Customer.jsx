@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getBusinesses, createTicket, getMyTickets, cancelTicket } from "../services/api";
+import { getBusinesses, createTicket, getMyTickets, cancelTicket, editTicket } from "../services/api";
 
 function Customer() {
   const [businesses, setBusinesses] = useState([]);
@@ -97,6 +97,27 @@ function Customer() {
 
     await fetchMyTickets();
     alert("Ticket cancelled");
+  };
+
+  const handleEdit = async (ticket) => {
+    const newMessage = prompt("Edit your ticket message:", ticket.message);
+
+    if (!newMessage || newMessage.trim() === "") {
+      alert("Message is required");
+      return;
+    }
+
+    const res = await editTicket(ticket._id, newMessage.trim());
+    console.log("Edit response:", res);
+
+
+    if (res.error) {
+      alert(res.error);
+      return;
+    }
+
+    await fetchMyTickets();
+    alert("Ticket updated");
   };
 
   const currentTickets = tickets.filter(
@@ -215,6 +236,13 @@ function Customer() {
 
               {t.status === "waiting" && (
                 <div className="ticket-actions">
+                  <button
+                    className="dashboard-button secondary"
+                    onClick={() => handleEdit(t)}
+                  >
+                    Edit Ticket
+                  </button>
+                  
                   <button
                     className="dashboard-button danger"
                     onClick={() => handleCancel(t._id)}
