@@ -149,6 +149,15 @@ function Customer() {
     if (name.includes("bank")) return "🏦";
     if (name.includes("barber")) return "✂️";
     if (name.includes("hospital")) return "✚";
+    if (name.includes("police")) return "🚔";
+    if (name.includes("library")) return "📚";
+    if (name.includes("phone")) return "📱";
+    if (name.includes("gym")) return "🏋️";
+    if (name.includes("post")) return "📦";
+    if (name.includes("restaurant")) return "🍽️";
+    if (name.includes("dental")) return "🦷";
+    if (name.includes("museum")) return "🖼️";
+    if (name.includes("bmw")) return "🚗";
 
 
     return "🏢";
@@ -162,6 +171,16 @@ function Customer() {
     if (name.includes("bank")) return "Banking & Financial Services";
     if (name.includes("barber")) return "Personal Care & Grooming";
     if (name.includes("hospital")) return "Healthcare & Medical Services";
+    if (name.includes("police")) return "Government & Public Safety";
+    if (name.includes("library")) return "Public Services & Education";
+    if (name.includes("phone")) return "Technology & Support";
+    if (name.includes("gym")) return "Fitness & Membership";
+    if (name.includes("post")) return "Delivery & Mail Services";
+    if (name.includes("restaurant")) return "Food & Dining";
+    if (name.includes("dental")) return "Healthcare & Dental Services";
+    if (name.includes("museum")) return "Culture & Events";
+
+    if (name.includes("bmw")) return "Vehicle Services";
 
 
     return "Business Services";
