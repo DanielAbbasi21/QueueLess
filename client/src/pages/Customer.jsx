@@ -178,6 +178,14 @@ function Customer() {
     business.name.toLowerCase().includes(businessSearch.toLowerCase())
   );
 
+  const ticketBusinesses = [
+    ...new Map(
+      tickets
+        .filter((ticket) => ticket.business?._id)
+        .map((ticket) => [ticket.business._id, ticket.business])
+    ).values(),
+  ];
+
 
   const toggleTicket = (id) => {
     setOpenTicketId(openTicketId === id ? null : id);
@@ -244,6 +252,28 @@ function Customer() {
         {filteredBusinesses.length === 0 && (
           <p className="empty-message">No businesses match your search.</p>
         )}
+      </section>
+
+      <section className="dashboard-section">
+        <h3 className="section-title">Filter Tickets</h3>
+
+        <div className="form-card">
+          <div className="form-group">
+            <select
+              className="dashboard-select"
+              value={ticketBusinessFilter}
+              onChange={(e) => setTicketBusinessFilter(e.target.value)}
+            >
+              <option value="">All businesses</option>
+
+              {ticketBusinesses.map((business) => (
+                <option key={business._id} value={business._id}>
+                  {business.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
       </section>
 
       <section className="dashboard-section">
