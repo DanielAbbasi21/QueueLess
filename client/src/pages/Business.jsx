@@ -4,6 +4,8 @@ import {
   startTicket,
   doneTicket,
   cancelTicket,
+  warnCustomer,
+  blockCustomer,
 } from "../services/api";
 
 function Business() {
@@ -84,13 +86,58 @@ function Business() {
   alert("Ticket cancelled");
 };
 
+  const handleWarn = async (ticket) => {
+    const reason = prompt("Why are you warning this customer?");
+
+    if (!reason || reason.trim() === "") {
+      alert("Warning reason is required");
+      return;
+    }
+
+    const res = await warnCustomer({
+      customer: ticket.user?._id,
+      ticket: ticket._id,
+      reason: reason.trim(),
+    });
+
+    if (res.error) {
+      alert(res.error);
+      return;
+    }
+
+    alert("Customer warned");
+  };
+
+  const handleBlock = async (ticket) => {
+    const reason = prompt("Why are you blocking this customer?");
+
+    if (!reason || reason.trim() === "") {
+      alert("Block reason is required");
+      return;
+    }
+
+    const res = await blockCustomer({
+      customer: ticket.user?._id,
+      ticket: ticket._id,
+      reason: reason.trim(),
+    });
+
+    if (res.error) {
+      alert(res.error);
+      return;
+    }
+
+    fetchTickets();
+    alert("Customer blocked");
+  };
+
 
   const activeTickets = tickets.filter((ticket) => ticket.status === "active");
 
   const waitingTickets = tickets.filter((ticket) => ticket.status === "waiting");
 
   const ticketHistory = tickets.filter(
-    (ticket) => ticket.status === "done" || ticket.status === "cancelled"
+    (ticket) => ticket.status === "done" || ticket.status === "cancelled" || ticket.status === "blocked"
   );
 
   const canCancelNoShow = (startedAt) => {
@@ -207,6 +254,19 @@ function Business() {
                 >
                   Cancel No-show
                 </button>
+                <button
+                  className="dashboard-button secondary"
+                  onClick={() => handleWarn(t)}
+                >
+                  Warn customer
+                </button>
+
+                <button
+                  className="dashboard-button danger"
+                  onClick={() => handleBlock(t)}
+                >
+                  Block customer
+                </button>
               </div>
 
 {!canCancelNoShow(t.started_at) && (
@@ -274,6 +334,19 @@ function Business() {
                   onClick={() => handleCancel(t._id)}
                 >
                   Cancel
+                </button>
+                <button
+                  className="dashboard-button secondary"
+                  onClick={() => handleWarn(t)}
+                >
+                  Warn customer
+                </button>
+
+                <button
+                  className="dashboard-button danger"
+                  onClick={() => handleBlock(t)}
+                >
+                  Block customer
                 </button>
               </div>
             </div>

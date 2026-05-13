@@ -104,7 +104,7 @@ function Customer() {
   );
 
   const ticketHistory = tickets.filter(
-    (ticket) => ticket.status === "done" || ticket.status === "cancelled"
+    (ticket) => ticket.status === "done" || ticket.status === "cancelled" || ticket.status === "blocked"
   );
 
   const formatDate = (date) => {

@@ -30,3 +30,8 @@
   background: #fee2e2;
   color: #991b1b;
 }
+
+.status-blocked {
+  background: #f3e8ff;
+  color: #6b21a8;
+}

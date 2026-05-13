@@ -73,6 +73,12 @@ exports.getAllTickets = async (business, user) => {
         return ticketObject;
       }
 
+      if (ticket.status === "blocked") {
+        ticketObject.queuePosition = null;
+        ticketObject.estimatedWaitTime = null;
+        return ticketObject;
+      }
+
       const waitingTicketsForBusiness = allWaitingTickets.filter(
         (waitingTicket) =>
           waitingTicket.business.toString() === ticket.business._id.toString()
@@ -170,3 +176,4 @@ exports.cancelTicket = async (id, reason, cancelledBy) => {
     .populate("user", "-password")
     .populate("business");
 };
+

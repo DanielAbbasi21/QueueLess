@@ -5,5 +5,5 @@ const businessActionController = require("../controllers/businessActionControlle
 const { verifyToken } = require("../middleware/authMiddleware");
 
 router.post("/warn", verifyToken, businessActionController.warnCustomer);
-
+router.post("/block", verifyToken, businessActionController.blockCustomer);
 module.exports = router;
