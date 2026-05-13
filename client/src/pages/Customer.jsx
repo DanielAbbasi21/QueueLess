@@ -8,7 +8,6 @@ function Customer() {
   const [loading, setLoading] = useState(true);
   const [openTicketId, setOpenTicketId] = useState(null);
   const [ticketBusinessFilter, setTicketBusinessFilter] = useState("");
-  const [historyStatusFilter, setHistoryStatusFilter] = useState("all");
 
   
   const [businessSearch, setBusinessSearch] = useState("");
@@ -136,19 +135,6 @@ function Customer() {
     (ticket) => ticket.status === "waiting" || ticket.status === "active"
   );
 
-  const allTicketHistory = filteredTickets.filter(
-    (ticket) =>
-      ticket.status === "done" ||
-      ticket.status === "cancelled" ||
-      ticket.status === "blocked"
-  );
-
-  const ticketHistory = 
-    historyStatusFilter === "all"
-      ? allTicketHistory
-      : allTicketHistory.filter(
-        (ticket) => ticket.status === historyStatusFilter
-      );
 
   const formatDate = (date) => {
     if (!date) return "-";
@@ -186,9 +172,9 @@ function Customer() {
     business.name.toLowerCase().includes(businessSearch.toLowerCase())
   );
 
-  const ticketBusinesses = [
+  const currentTicketBusinesses = [
     ...new Map(
-      tickets
+      currentTickets
         .filter((ticket) => ticket.business?._id)
         .map((ticket) => [ticket.business._id, ticket.business])
     ).values(),
@@ -262,27 +248,29 @@ function Customer() {
         )}
       </section>
 
-      <section className="dashboard-section">
-        <h3 className="section-title">Filter Tickets</h3>
+       {currentTicketBusinesses.length > 0 && (
+        <section className="dashboard-section">
+          <h3 className="section-title">Filter Tickets</h3>
 
-        <div className="form-card">
-          <div className="form-group">
-            <select
-              className="dashboard-select"
-              value={ticketBusinessFilter}
-              onChange={(e) => setTicketBusinessFilter(e.target.value)}
-            >
-              <option value="">All businesses</option>
+          <div className="form-card">
+            <div className="form-group">
+              <select
+                className="dashboard-select"
+                value={ticketBusinessFilter}
+                onChange={(e) => setTicketBusinessFilter(e.target.value)}
+              >
+                <option value="">All businesses</option>
 
-              {ticketBusinesses.map((business) => (
-                <option key={business._id} value={business._id}>
-                  {business.name}
-                </option>
-              ))}
-            </select>
+                {currentTicketBusinesses.map((business) => (
+                  <option key={business._id} value={business._id}>
+                    {business.name}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       <section className="dashboard-section">
         <h3 className="section-title">Current Tickets</h3>
@@ -346,12 +334,6 @@ function Customer() {
                   </p>
 
                   {t.status === "waiting" && (
-                    <p>
-                      <b>Estimated wait:</b> {t.estimatedWaitTime} minutes
-                    </p>
-                  )}
-
-                  {t.status === "waiting" && (
                     <div className="ticket-actions">
                       <button
                         className="dashboard-button secondary"
@@ -376,108 +358,6 @@ function Customer() {
       </section>
 
 
-      <section className="dashboard-section">
-        <h3 className="section-title">Ticket History</h3>
-          <div className="history-filter">
-            <button
-              className={`filter-button ${historyStatusFilter === "all" ? "active" : ""}`}
-              onClick={() => setHistoryStatusFilter("all")}
-            >
-              All
-            </button>
-
-            <button
-              className={`filter-button ${historyStatusFilter === "done" ? "active" : ""}`}
-              onClick={() => setHistoryStatusFilter("done")}
-            >
-              Done
-            </button>
-
-            <button
-              className={`filter-button ${
-                historyStatusFilter === "cancelled" ? "active" : ""
-              }`}
-              onClick={() => setHistoryStatusFilter("cancelled")}
-            >
-              Cancelled
-            </button>
-
-            <button
-              className={`filter-button ${
-                historyStatusFilter === "blocked" ? "active" : ""
-              }`}
-              onClick={() => setHistoryStatusFilter("blocked")}
-            >
-              Blocked
-            </button>
-          </div>
-
-        {ticketHistory.length === 0 && (
-          <p className="empty-message">No completed or cancelled tickets yet.</p>
-        )}
-
-
-        <div className="ticket-grid">
-          {ticketHistory.map((t) => (
-            <div className="ticket-card clickable-card" key={t._id}>
-              <div onClick={() => toggleTicket(t._id)}>
-                <p>
-                  <b>Business:</b> {t.business?.name}
-                </p>
-
-                <p>
-                  <b>Status:</b>{" "}
-                  <span className={`status-badge status-${t.status}`}>
-                    {t.status}
-                  </span>
-                </p>
-
-                <p className="helper-text">
-                  {openTicketId === t._id ? "Click to hide details" : "Click to view details"}
-                </p>
-                </div>
-
-                {openTicketId === t._id && (
-                  <>
-                    <p>
-                      <b>Message:</b> {t.message}
-                    </p>
-
-                    <p>
-                      <b>Created:</b> {formatDate(t.created_at)}
-                    </p>
-
-                    {t.completed_at && (
-                      <p>
-                        <b>Completed:</b> {formatDate(t.completed_at)}
-                      </p>
-                    )}
-
-                    {t.cancelled_at && (
-                      <p>
-                        <b>Cancelled:</b> {formatDate(t.cancelled_at)}
-                      </p>
-                    )}
-
-                    {t.cancelled_reason && (
-                      <p>
-                        <b>{t.status === "blocked" ? "Blocked reason:" : "Cancellation reason:"}</b> {" "}
-                        {t.cancelled_reason}
-                      </p>
-                    )}
-
-                    {t.cancelled_by && (
-                      <p>
-                        <b>{t.status === "blocked" ? "Blocked By:" : "Cancelled By:"}</b> {" "}
-                        {t.cancelled_by}
-                      </p>
-                    )}
-                  </>
-                )}
-            </div>
-          ))}
-        </div>
-      </section>
       {showTicketModal && selectedBusinessForTicket && (
         <div className="modal-overlay">
           <div className="ticket-modal">

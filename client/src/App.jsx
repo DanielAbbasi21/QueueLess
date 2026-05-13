@@ -6,6 +6,7 @@ import Business from "./pages/Business";
 import Account from "./pages/Account";
 import Inbox from "./pages/Inbox";
 import { getUnreadNotificationCount } from "./services/api";
+import History from "./pages/History";
 
 
 function App() {
@@ -60,6 +61,13 @@ useEffect(() => {
         >
           Dashboard
         </button>
+
+        <button
+          className={`nav-button ${page === "history" ? "active" : ""}`}
+          onClick={() => setPage("history")}
+        >
+          History
+        </button>
         
       {user.role === "customer" && (
         <button
@@ -81,6 +89,8 @@ useEffect(() => {
 
 
     {page === "account" && <Account />}
+
+    {page === "history" && <History user={user} />}
 
     {page === "inbox" && user.role === "customer" && <Inbox />}
 

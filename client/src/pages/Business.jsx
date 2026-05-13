@@ -12,7 +12,6 @@ function Business() {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [openTicketId, setOpenTicketId] = useState(null);
-  const [historyStatusFilter, setHistoryStatusFilter] = useState("all");
 
   const user = JSON.parse(localStorage.getItem("user") || "null");
 
@@ -138,16 +137,6 @@ function Business() {
 
   const waitingTickets = tickets.filter((ticket) => ticket.status === "waiting");
 
-  const ticketHistory = tickets.filter(
-    (ticket) => ticket.status === "done" || ticket.status === "cancelled" || ticket.status === "blocked"
-  );
-
-  const ticketHistoryFiltered = 
-    historyStatusFilter === "all"
-      ? ticketHistory
-      : ticketHistory.filter(
-        (ticket) => ticket.status === historyStatusFilter
-      );
 
   const canCancelNoShow = (startedAt) => {
     if (!startedAt) return false;
@@ -376,120 +365,6 @@ function Business() {
         </div>
       </section>
 
-
-        <section className="dashboard-section">
-          <h3 className="section-title">Ticket History</h3>
-            <div className="history-filter">
-              <button
-                className={`filter-button ${historyStatusFilter === "all" ? "active" : ""}`}
-                onClick={() => setHistoryStatusFilter("all")}
-              >
-                All
-              </button>
-
-              <button
-                className={`filter-button ${historyStatusFilter === "done" ? "active" : ""}`}
-                onClick={() => setHistoryStatusFilter("done")}
-              >
-                Done
-              </button>
-
-              <button
-                className={`filter-button ${
-                  historyStatusFilter === "cancelled" ? "active" : ""
-                }`}
-                onClick={() => setHistoryStatusFilter("cancelled")}
-              >
-                Cancelled
-              </button>
-
-              <button
-                className={`filter-button ${
-                  historyStatusFilter === "blocked" ? "active" : ""
-                }`}
-                onClick={() => setHistoryStatusFilter("blocked")}
-              >
-                Blocked
-              </button>
-            </div>
-
-          {!loading && ticketHistory.length === 0 && (
-            <p className="empty-message">No completed or cancelled tickets yet.</p>
-          )}
-
-
-          <div className="ticket-grid">
-            {ticketHistory.map((t) => (
-              <div className="ticket-card clickable-card" key={t._id}>
-                <div onClick={() => toggleTicket(t._id)}>
-                  <p>
-                    <b>User:</b> {t.user?.name}
-                  </p>
-
-                  <p>
-                    <b>Status:</b>{" "}
-                    <span className={`status-badge status-${t.status}`}>
-                      {t.status}
-                    </span>
-                  </p>
-
-                  <p className="helper-text">
-                    {openTicketId === t._id ? "Click to hide details" : "Click to view details"}
-                  </p>
-                </div>
-
-                {openTicketId === t._id && (
-                  <>
-                    <p>
-                      <b>Business:</b> {t.business?.name}
-                    </p>
-
-                    <p>
-                      <b>Message:</b> {t.message}
-                    </p>
-
-                    <p>
-                      <b>Created:</b> {formatDate(t.created_at)}
-                    </p>
-
-
-                    {t.started_at && (
-                      <p>
-                        <b>Started:</b> {formatDate(t.started_at)}
-                      </p>
-                    )}
-
-                    {t.completed_at && (
-                      <p>
-                        <b>Completed:</b> {formatDate(t.completed_at)}
-                      </p>
-                    )}
-
-                    {t.cancelled_at && (
-                      <p>
-                        <b>Cancelled:</b> {formatDate(t.cancelled_at)}
-                      </p>
-                    )}
-
-                    {t.cancelled_reason && (
-                      <p>
-                        <b>{t.status === "blocked" ? "Blocked reason:" : "Cancellation reason:"}</b> {" "}
-                        {t.cancelled_reason}
-                      </p>
-                    )}
-
-                    {t.cancelled_by && (
-                      <p>
-                        <b>{t.status === "blocked" ? "Blocked By:" : "Cancelled By:"}</b> {" "}
-                        {t.cancelled_by}
-                      </p>
-                    )}
-                  </>
-                )}
-              </div>
-            ))}
-          </div>
-      </section>
     </div>
   );
 }
