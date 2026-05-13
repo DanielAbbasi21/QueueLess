@@ -8,6 +8,7 @@ function Customer() {
   const [selectedBusiness, setSelectedBusiness] = useState("");
   const [loading, setLoading] = useState(true);
   const [openTicketId, setOpenTicketId] = useState(null);
+  const [ticketBusinessFilter, setTicketBusinessFilter] = useState("");
   
 
   const user = JSON.parse(localStorage.getItem("user") || "null");
@@ -121,13 +122,21 @@ function Customer() {
     alert("Ticket updated");
   };
 
-  const currentTickets = tickets.filter(
+  const filteredTickets = ticketBusinessFilter
+  ? tickets.filter((ticket) => ticket.business?._id === ticketBusinessFilter)
+  : tickets;
+
+  const currentTickets = filteredTickets.filter(
     (ticket) => ticket.status === "waiting" || ticket.status === "active"
   );
 
-  const ticketHistory = tickets.filter(
-    (ticket) => ticket.status === "done" || ticket.status === "cancelled" || ticket.status === "blocked"
+  const ticketHistory = filteredTickets.filter(
+    (ticket) =>
+      ticket.status === "done" ||
+      ticket.status === "cancelled" ||
+      ticket.status === "blocked"
   );
+
 
   const formatDate = (date) => {
     if (!date) return "-";
@@ -183,6 +192,31 @@ function Customer() {
         </div>
       </section>
 
+      <section className="dashboard-section">
+        <h3 className="section-title">Filter Tickets</h3>
+
+        <div className="form-card">
+          <div className="form-group">
+            <select
+              className="dashboard-select"
+              value={ticketBusinessFilter}
+              onChange={(e) => setTicketBusinessFilter(e.target.value)}
+            >
+              <option value="">All businesses</option>
+
+              {[...new Map(
+                tickets
+                  .filter((ticket) => ticket.business?._id)
+                  .map((ticket) => [ticket.business._id, ticket.business])
+              ).values()].map((business) => (
+                <option key={business._id} value={business._id}>
+                  {business.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+      </section>
 
       <section className="dashboard-section">
         <h3 className="section-title">Current Tickets</h3>
