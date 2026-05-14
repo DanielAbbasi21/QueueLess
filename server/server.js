@@ -12,7 +12,7 @@ const businessRoutes = require("./routes/businessRoutes");
 const authRoutes = require("./routes/authRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
 const businessActionRoutes = require("./routes/businessActionRoutes");
-
+const adminRoutes = require("./routes/adminRoutes");
 
 app.use(express.json());
 
@@ -25,7 +25,7 @@ app.use("/businesses", businessRoutes);
 app.use("/auth", authRoutes);
 app.use("/notifications", notificationRoutes);
 app.use("/business-actions", businessActionRoutes);
-
+app.use("/admin", adminRoutes);
 
 connectMongo();
 

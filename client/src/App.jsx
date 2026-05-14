@@ -7,6 +7,7 @@ import Account from "./pages/Account";
 import Inbox from "./pages/Inbox";
 import { getUnreadNotificationCount } from "./services/api";
 import History from "./pages/History";
+import Admin from "./pages/Admin";
 
 
 function App() {
@@ -29,26 +30,31 @@ function App() {
   }
 };
 
-useEffect(() => {
-  if (!user || user.role !== "customer") return;
+  useEffect(() => {
+    if (!user || user.role !== "customer") return;
 
-  fetchUnreadCount();
-
-  const interval = setInterval(() => {
     fetchUnreadCount();
-  }, 5000);
 
-  return () => clearInterval(interval);
-}, [user]);
+    const interval = setInterval(() => {
+      fetchUnreadCount();
+    }, 5000);
 
+    return () => clearInterval(interval);
+  }, [user]);
 
-  if (!user) {
-  return showRegister ? (
-    <Register setShowRegister={setShowRegister} />
-  ) : (
-    <Login setUser={setUser} setShowRegister={setShowRegister} />
-  );
-}
+  useEffect(() => {
+    if (user?.role === "admin" && page === "dashboard") {
+      setPage("admin");
+    }
+  }, [user, page]);
+
+    if (!user) {
+    return showRegister ? (
+      <Register setShowRegister={setShowRegister} />
+    ) : (
+      <Login setUser={setUser} setShowRegister={setShowRegister} />
+    );
+  }
 
   return (
     <div className="app-shell">
@@ -59,19 +65,30 @@ useEffect(() => {
         </div>
 
         <div className="app-nav-actions">
-          <button
-            className={`nav-button ${page === "dashboard" ? "active" : ""}`}
-            onClick={() => setPage("dashboard")}
-          >
-            Dashboard
-          </button>
+          {user.role === "admin" ? (
+            <button
+              className={`nav-button ${page === "admin" ? "active" : ""}`}
+              onClick={() => setPage("admin")}
+            >
+              Admin
+            </button>
+          ) : (
+            <>
+              <button
+                className={`nav-button ${page === "dashboard" ? "active" : ""}`}
+                onClick={() => setPage("dashboard")}
+              >
+                Dashboard
+              </button>
 
-          <button
-            className={`nav-button ${page === "history" ? "active" : ""}`}
-            onClick={() => setPage("history")}
-          >
-            History
-          </button>
+              <button
+                className={`nav-button ${page === "history" ? "active" : ""}`}
+                onClick={() => setPage("history")}
+              >
+                History
+              </button>
+            </>
+          )}
           
           {user.role === "customer" && (
             <button
@@ -93,9 +110,11 @@ useEffect(() => {
 
         <main className="app-main">
 
+        {page === "admin" && user.role === "admin" && <Admin />}
+
         {page === "account" && <Account />}
 
-        {page === "history" && <History user={user} />}
+        {page === "history" && user.role !== "admin" && <History user={user} />}
 
         {page === "inbox" && user.role === "customer" && <Inbox />}
 
@@ -103,7 +122,7 @@ useEffect(() => {
 
         {page === "dashboard" && user.role === "business" && <Business />}
 
-        {!["customer", "business"].includes(user.role) && (
+        {!["customer", "business", "admin"].includes(user.role) && (
           <p>Unknown user role</p>
         )}
       </main>
