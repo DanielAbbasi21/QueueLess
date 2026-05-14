@@ -199,3 +199,12 @@ export const unblockCustomer = async ({ customer }) => {
   return res.json();
 };
 
+export const deleteMyAccount = async () => {
+  const res = await fetch(`${API}/auth/me`, {
+    method: "DELETE",
+    headers: getAuthHeaders(),
+  });
+
+
+  return res.json();
+};

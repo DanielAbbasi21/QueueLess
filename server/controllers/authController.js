@@ -2,6 +2,11 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const Business = require("../models/Business");
+const Ticket = require("../models/Ticket");
+const Notification = require("../models/Notification");
+const BusinessBlock = require("../models/BusinessBlock");
+const BusinessWarning = require("../models/BusinessWarning");
+
 
 exports.register = async (req, res) => {
   const { name, email, password, role, business, businessName } = req.body;
@@ -169,4 +174,86 @@ exports.getMe = async (req, res) => {
   }
 };
 
+exports.deleteMe = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.userId);
 
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+
+    if (user.role === "customer") {
+      await Ticket.deleteMany({
+        user: user._id,
+      });
+
+
+      await Notification.deleteMany({
+        user: user._id,
+      });
+
+
+      await BusinessBlock.deleteMany({
+        customer: user._id,
+      });
+
+
+      await BusinessWarning.deleteMany({
+        customer: user._id,
+      });
+    }
+
+
+    if (user.role === "business") {
+      await Ticket.deleteMany({
+        business: user.business,
+      });
+
+
+      await Notification.deleteMany({
+        business: user.business,
+      });
+
+
+      await BusinessBlock.deleteMany({
+        business: user.business,
+      });
+
+
+      await BusinessWarning.deleteMany({
+        business: user.business,
+      });
+
+
+      const otherBusinessUsers = await User.countDocuments({
+        _id: { $ne: user._id },
+        business: user.business,
+      });
+
+
+      if (user.business && otherBusinessUsers === 0) {
+        await Business.findByIdAndDelete(user.business);
+      }
+    }
+
+
+    await User.findByIdAndDelete(user._id);
+
+
+    res.json({
+      success: true,
+      message: "Account deleted",
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to delete account",
+      details: err.message,
+    });
+  }
+};
