@@ -165,7 +165,7 @@ exports.blockCustomer = async (req, res) => {
           cancelled_reason: `Customer blocked. Reason: ${reason.trim()}`,
           cancelled_by: "business",
         },
-        { new: true }
+        { returnDocument: "after" }
       );
 
       await Notification.create({
