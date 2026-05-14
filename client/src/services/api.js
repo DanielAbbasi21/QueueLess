@@ -208,3 +208,35 @@ export const deleteMyAccount = async () => {
 
   return res.json();
 };
+
+export const getAdminStats = async () => {
+  const res = await fetch(`${API}/admin/stats`, {
+    headers: getAuthHeaders(),
+  });
+
+  return res.json();
+};
+
+export const getAdminUsers = async () => {
+  const res = await fetch(`${API}/admin/users`, {
+    headers: getAuthHeaders(),
+  });
+
+  return res.json();
+};
+
+export const getAdminBusinesses = async () => {
+  const res = await fetch(`${API}/admin/businesses`, {
+    headers: getAuthHeaders(),
+  });
+
+  return res.json();
+};
+
+export const getAdminTickets = async (status = "all") => {
+  const res = await fetch(`${API}/admin/tickets?status=${status}`, {
+    headers: getAuthHeaders(),
+  });
+
+  return res.json();
+};
