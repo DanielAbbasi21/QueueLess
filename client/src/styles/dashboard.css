@@ -533,6 +533,10 @@
     border-radius: 14px;
   }
 
+  .account-actions {
+  justify-content: center;
+  }
+
   .ticket-card {
     padding: 14px;
   }
