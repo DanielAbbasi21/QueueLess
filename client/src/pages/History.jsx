@@ -6,6 +6,10 @@ function History({ user }) {
   const [loading, setLoading] = useState(true);
   const [historyStatusFilter, setHistoryStatusFilter] = useState("all");
   const [openTicketId, setOpenTicketId] = useState(null);
+  const [feedbackMessage, setFeedbackMessage] = useState("");
+  const [feedbackType, setFeedbackType] = useState("");
+  const [unblockModalTicket, setUnblockModalTicket] = useState(null);
+
 
   const fetchHistoryTickets = async () => {
     const data =
@@ -16,7 +20,7 @@ function History({ user }) {
     if (!Array.isArray(data)) {
       setTickets([]);
       setLoading(false);
-      alert(data.message || data.error || "Failed to fetch ticket history");
+      showFeedback(data.message || data.error || "Failed to fetch ticket history", "error");
       return;
     }
 
@@ -58,25 +62,20 @@ function History({ user }) {
         );
 
   const handleUnblock = async (ticket) => {
-    const confirmUnblock = window.confirm(
-      `Unblock ${ticket.user?.name || "this customer"}?`
-    );
-
-    if (!confirmUnblock) {
-      return;
-    }
-
     const res = await unblockCustomer({
       customer: ticket.user?._id,
     });
 
+
     if (res.error) {
-      alert(res.error);
+      showFeedback(res.error, "error");
       return;
     }
 
+
+    setUnblockModalTicket(null);
     await fetchHistoryTickets();
-    alert("Customer unblocked");
+    showFeedback("Customer unblocked", "success");
   };
 
   const getReasonText = (reason = "") => {
@@ -86,10 +85,26 @@ function History({ user }) {
 
     return reason.split("Reason:").pop().trim();
   };
-    
+
+  const showFeedback = (message, type = "success") => {
+    setFeedbackMessage(message);
+    setFeedbackType(type);
+
+
+    setTimeout(() => {
+      setFeedbackMessage("");
+      setFeedbackType("");
+    }, 3500);
+  };
 
   return (
     <div className="dashboard-page">
+      {feedbackMessage && (
+        <div className={`toast-message ${feedbackType}`}>
+          {feedbackMessage}
+        </div>
+      )}
+      
       <div className="dashboard-header">
         <h2 className="dashboard-title">Ticket History</h2>
         <p className="dashboard-subtitle">
@@ -220,7 +235,7 @@ function History({ user }) {
                   <div className="ticket-actions">
                     <button
                       className="dashboard-button secondary"
-                      onClick={() => handleUnblock(t)}
+                      onClick={() => setUnblockModalTicket(t)}
                     >
                       Unblock customer
                     </button>
@@ -231,6 +246,54 @@ function History({ user }) {
           </div>
         ))}
       </div>
+      {unblockModalTicket && (
+        <div className="modal-overlay">
+          <div className="ticket-modal">
+            <button
+              className="modal-close-button"
+              type="button"
+              onClick={() => setUnblockModalTicket(null)}
+            >
+              ×
+            </button>
+
+
+            <div className="ticket-modal-header">
+              <div>
+                <h3>Unblock customer</h3>
+                <p>
+                  Customer: {unblockModalTicket.user?.name || "Unknown customer"}
+                </p>
+              </div>
+            </div>
+
+
+            <p className="modal-helper-text">
+              Are you sure you want to unblock this customer? They will be able to create tickets for your business again.
+            </p>
+
+
+            <div className="ticket-actions modal-actions">
+              <button
+                className="dashboard-button secondary"
+                type="button"
+                onClick={() => setUnblockModalTicket(null)}
+              >
+                Cancel
+              </button>
+
+
+              <button
+                className="dashboard-button"
+                type="button"
+                onClick={() => handleUnblock(unblockModalTicket)}
+              >
+                Confirm unblock
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

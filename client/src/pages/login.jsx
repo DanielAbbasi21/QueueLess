@@ -4,6 +4,8 @@ import { login } from "../services/api";
 function Login({ setUser, setShowRegister }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [feedbackMessage, setFeedbackMessage] = useState("");
+  const [feedbackType, setFeedbackType] = useState("");
 
   const handleLogin = async () => {
     const res = await login(email, password);
@@ -13,12 +15,29 @@ function Login({ setUser, setShowRegister }) {
       localStorage.setItem("token", res.token);
       setUser(res.user);
     } else {
-      alert(res.message || "Wrong login");
+      showFeedback(res.message || "Wrong login", "error");
     }
+  };
+
+  const showFeedback = (message, type = "error") => {
+    setFeedbackMessage(message);
+    setFeedbackType(type);
+
+
+    setTimeout(() => {
+      setFeedbackMessage("");
+      setFeedbackType("");
+    }, 3500);
   };
 
   return (
     <div className="auth-page">
+      {feedbackMessage && (
+        <div className={`toast-message ${feedbackType}`}>
+          {feedbackMessage}
+        </div>
+      )}
+
       <div className="auth-card">
         <h2 className="auth-title">Login</h2>
         <p className="auth-subtitle">Welcome back to QueueLess</p>

@@ -8,20 +8,20 @@ function Register({ setShowRegister }) {
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("customer");
   const [businessName, setBusinessName] = useState("");
-
+  const [feedbackMessage, setFeedbackMessage] = useState("");
+  const [feedbackType, setFeedbackType] = useState("");
 
   const handleRegister = async () => {
     if (!name || !email || !password) {
-      alert("Name, email and password are required");
+      showFeedback("Name, email and password are required", "error");
       return;
     }
 
 
     if (role === "business" && !businessName) {
-      alert("Business name is required");
+      showFeedback("Business name is required", "error");
       return;
     }
-
 
     const res = await register({
       name,
@@ -33,16 +33,31 @@ function Register({ setShowRegister }) {
 
 
     if (res.success) {
-      alert("Account created. Please log in.");
+      showFeedback("Account created. Please log in.", "success");
       setShowRegister(false);
     } else {
-      alert(res.message || "Failed to register");
+      showFeedback(res.message || "Failed to register", "error");
     }
   };
 
+  const showFeedback = (message, type = "error") => {
+    setFeedbackMessage(message);
+    setFeedbackType(type);
+
+
+    setTimeout(() => {
+      setFeedbackMessage("");
+      setFeedbackType("");
+    }, 3500);
+  };
 
   return (
     <div className="auth-page">
+      {feedbackMessage && (
+        <div className={`toast-message ${feedbackType}`}>
+          {feedbackMessage}
+        </div>
+      )}
       <div className="auth-card">
         <h2 className="auth-title">Register</h2>
         <p className="auth-subtitle">Create your QueueLess account</p>
