@@ -41,7 +41,7 @@ exports.markAsRead = async (req, res) => {
         read: true,
       },
       {
-        new: true,
+        returnDocument: "after",
       }
     )
       .populate("business")

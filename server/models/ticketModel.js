@@ -130,7 +130,7 @@ exports.startTicket = async (id) => {
       status: "active",
       started_at: new Date()
     },
-    { new: true }
+    { returnDocument: "after" }
   )
     .populate("user", "-password")
     .populate("business");
@@ -156,7 +156,7 @@ exports.doneTicket = async (id) => {
       status: "done",
       completed_at: new Date(),
     },
-    { new: true }
+    { returnDocument: "after" }
   )
     .populate("user", "-password")
     .populate("business");
@@ -171,7 +171,7 @@ exports.cancelTicket = async (id, reason, cancelledBy) => {
       cancelled_reason: reason,
       cancelled_by: cancelledBy,
     },
-    { new: true }
+    { returnDocument: "after" }
   )
     .populate("user", "-password")
     .populate("business");
@@ -184,7 +184,7 @@ exports.cancelTicket = async (id, reason, cancelledBy) => {
     {
       message,
     },
-    { new: true }
+    { returnDocument: "after" }
   )
     .populate("user", "-password")
     .populate("business");
