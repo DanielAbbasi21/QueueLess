@@ -101,9 +101,6 @@ function Account() {
 
       <div className="account-header">
         <h2 className="dashboard-title">Account</h2>
-        <p className="dashboard-subtitle">
-          View your account information.
-        </p>
       </div>
 
 
@@ -178,15 +175,6 @@ function Account() {
 
             <div className="ticket-actions modal-actions">
               <button
-                className="dashboard-button secondary"
-                type="button"
-                onClick={() => setShowLogoutModal(false)}
-              >
-                Cancel
-              </button>
-
-
-              <button
                 className="dashboard-button danger"
                 type="button"
                 onClick={confirmLogout}
@@ -225,15 +213,6 @@ function Account() {
 
 
             <div className="ticket-actions modal-actions">
-              <button
-                className="dashboard-button secondary"
-                type="button"
-                onClick={() => setShowDeleteModal(false)}
-              >
-                Cancel
-              </button>
-
-
               <button
                 className="dashboard-button danger"
                 type="button"

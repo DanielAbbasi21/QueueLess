@@ -246,9 +246,6 @@ function Customer() {
       <section className="dashboard-section business-discovery">
         <div className="business-discovery-header">
           <h3 className="section-title">Find a Business</h3>
-          <p className="dashboard-subtitle">
-            Search for a business to get started or browse available options below.
-          </p>
         </div>
 
         <div className="business-search-wrapper">
@@ -283,7 +280,9 @@ function Customer() {
                 <p>{getBusinessCategory(business.name)}</p>
               </div>
 
-              <span className="business-option-arrow">›</span>
+              <span className="business-option-arrow">
+                <span className="business-option-arrow-icon">›</span>
+              </span>
             </button>
           ))}
         </div>
@@ -449,13 +448,7 @@ function Customer() {
             </div>
 
             <div className="ticket-actions modal-actions">
-              <button
-                className="dashboard-button secondary"
-                type="button"
-                onClick={closeTicketModal}
-              >
-                Cancel
-              </button>
+          
 
               <button
                 className="dashboard-button"

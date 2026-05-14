@@ -107,9 +107,7 @@ function History({ user }) {
       
       <div className="dashboard-header">
         <h2 className="dashboard-title">Ticket History</h2>
-        <p className="dashboard-subtitle">
-          View completed, cancelled, and blocked tickets.
-        </p>
+      
       </div>
 
       <div className="history-filter">
@@ -274,14 +272,6 @@ function History({ user }) {
 
 
             <div className="ticket-actions modal-actions">
-              <button
-                className="dashboard-button secondary"
-                type="button"
-                onClick={() => setUnblockModalTicket(null)}
-              >
-                Cancel
-              </button>
-
 
               <button
                 className="dashboard-button"

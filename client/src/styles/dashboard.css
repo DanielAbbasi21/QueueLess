@@ -20,12 +20,6 @@
 }
 
 
-.dashboard-subtitle {
-  color: var(--text);
-  margin-top: 4px;
-}
-
-
 .dashboard-section {
   margin-top: 28px;
 }
@@ -300,13 +294,24 @@
 .business-option-arrow {
   width: 34px;
   height: 34px;
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  line-height: 1;
   border: 1px solid var(--border);
   border-radius: 999px;
   color: var(--text-h);
   font-size: 28px;
+  transform: translateY(-2px);
 }
+.business-option-arrow-icon {
+  display: block;
+  line-height: 1;
+  font-size: 28px;
+  transform: translateY(-3px);
+}
+
 .modal-overlay {
   position: fixed;
   inset: 0;

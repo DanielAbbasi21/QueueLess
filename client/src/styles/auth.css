@@ -6,6 +6,23 @@
   padding: 32px;
 }
 
+
+.auth-wrapper {
+  width: 100%;
+  max-width: 520px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+}
+
+.auth-logo {
+  width: min(420px, 90vw);
+  height: auto;
+  object-fit: contain;
+  display: block;
+}
+
 .auth-card {
   width: 100%;
   max-width: 420px;
@@ -90,4 +107,50 @@
 
 .auth-link-button:hover {
   text-decoration: underline;
+}
+
+.password-field {
+  position: relative;
+  width: 100%;
+}
+
+.password-input {
+  padding-right: 78px;
+}
+
+.password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  color: var(--accent);
+  font-weight: 700;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.password-toggle:hover {
+  color: var(--text-h);
+}
+
+@media (max-width: 640px) {
+  .auth-page {
+    padding: 20px;
+    align-items: flex-start;
+  }
+
+  .auth-wrapper {
+    gap: 18px;
+  }
+
+  .auth-logo {
+    width: min(340px, 92vw);
+    margin-top: 16px;
+  }
+
+  .auth-card {
+    padding: 24px;
+  }
 }
