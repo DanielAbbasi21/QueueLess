@@ -13,7 +13,8 @@ function Customer() {
   const [showTicketModal, setShowTicketModal] = useState(false);
   const [feedbackMessage, setFeedbackMessage] = useState("");
   const [feedbackType, setFeedbackType] = useState("");
-
+  const [editModalTicket, setEditModalTicket] = useState(null);
+  const [editTicketMessage, setEditTicketMessage] = useState("");
 
   const user = JSON.parse(localStorage.getItem("user") || "null");
 
@@ -106,35 +107,53 @@ function Customer() {
     showFeedback("Ticket cancelled", "success");
   };
 
-  const handleEdit = async (ticket) => {
-    const newMessage = prompt("Edit your ticket message:", ticket.message);
+const openEditModal = (ticket) => {
+  setEditModalTicket(ticket);
+  setEditTicketMessage(ticket.message || "");
+};
 
-    if (!newMessage || newMessage.trim() === "") {
+const closeEditModal = () => {
+  setEditModalTicket(null);
+  setEditTicketMessage("");
+};
+
+  const handleEditSubmit = async () => {
+    if (!editModalTicket) return;
+
+    if (!editTicketMessage.trim()) {
       showFeedback("Message is required", "error");
       return;
     }
 
-    const res = await editTicket(ticket._id, newMessage.trim());
-    console.log("Edit response:", res);
-
+    const res = await editTicket(editModalTicket._id, editTicketMessage.trim());
 
     if (res.error) {
       showFeedback(res.error, "error");
       return;
     }
 
+    closeEditModal();
     await fetchMyTickets();
     showFeedback("Ticket updated", "success");
   };
 
-  const filteredTickets = ticketBusinessFilter
-  ? tickets.filter((ticket) => ticket.business?._id === ticketBusinessFilter)
-  : tickets;
-
-  const currentTickets = filteredTickets.filter(
+  const allCurrentTickets = tickets.filter(
     (ticket) => ticket.status === "waiting" || ticket.status === "active"
   );
 
+  const currentTicketBusinesses = [
+    ...new Map(
+      allCurrentTickets
+        .filter((ticket) => ticket.business?._id)
+        .map((ticket) => [ticket.business._id, ticket.business])
+    ).values(),
+  ];
+
+  const currentTickets = ticketBusinessFilter
+    ? allCurrentTickets.filter(
+        (ticket) => ticket.business?._id === ticketBusinessFilter
+      )
+    : allCurrentTickets;
 
   const formatDate = (date) => {
     if (!date) return "-";
@@ -188,15 +207,6 @@ function Customer() {
   const filteredBusinesses = businesses.filter((business) =>
     business.name.toLowerCase().includes(businessSearch.toLowerCase())
   );
-
-  const currentTicketBusinesses = [
-    ...new Map(
-      currentTickets
-        .filter((ticket) => ticket.business?._id)
-        .map((ticket) => [ticket.business._id, ticket.business])
-    ).values(),
-  ];
-
 
   const toggleTicket = (id) => {
     setOpenTicketId(openTicketId === id ? null : id);
@@ -381,7 +391,7 @@ function Customer() {
                     <div className="ticket-actions">
                       <button
                         className="dashboard-button secondary"
-                        onClick={() => handleEdit(t)}
+                        onClick={() => openEditModal(t)}
                       >
                         Edit Ticket
                       </button>
@@ -410,7 +420,7 @@ function Customer() {
               type="button"
               onClick={closeTicketModal}
             >
-              ×
+              <span className="modal-close-icon">×</span>
             </button>
 
             <div className="ticket-modal-header">
@@ -456,6 +466,54 @@ function Customer() {
                 onClick={handleSubmit}
               >
                 Submit Ticket
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {editModalTicket && (
+        <div className="modal-overlay">
+          <div className="ticket-modal">
+            <button
+              className="modal-close-button"
+              type="button"
+              onClick={closeEditModal}
+            >
+              <span className="modal-close-icon">×</span>
+            </button>
+
+            <div className="ticket-modal-header">
+              <div>
+                <h3>Edit ticket</h3>
+                <p>{editModalTicket.business?.name || "Selected business"}</p>
+              </div>
+            </div>
+
+            <p className="modal-helper-text">
+              Update your ticket message before your turn starts.
+            </p>
+
+            <div className="form-group">
+              <label>Message</label>
+
+              <textarea
+                className="dashboard-textarea"
+                placeholder="Update your ticket message..."
+                value={editTicketMessage}
+                onChange={(e) => setEditTicketMessage(e.target.value)}
+                maxLength={500}
+              />
+
+              <p className="helper-text">{editTicketMessage.length} / 500</p>
+            </div>
+
+            <div className="ticket-actions modal-actions">
+              <button
+                className="dashboard-button"
+                type="button"
+                onClick={handleEditSubmit}
+              >
+                Save changes
               </button>
             </div>
           </div>
