@@ -6,13 +6,16 @@ import {
   cancelTicket,
   warnCustomer,
   blockCustomer,
-  unblockCustomer
 } from "../services/api";
 
 function Business() {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [openTicketId, setOpenTicketId] = useState(null);
+  const [feedbackMessage, setFeedbackMessage] = useState("");
+  const [feedbackType, setFeedbackType] = useState("");
+  const [actionModal, setActionModal] = useState(null);
+  const [actionReason, setActionReason] = useState("");
 
   const user = JSON.parse(localStorage.getItem("user") || "null");
 
@@ -28,7 +31,7 @@ function Business() {
     if (!Array.isArray(data)) {
       setTickets([]);
       setLoading(false);
-      alert(data.message || data.error || "Failed to fetch tickets");
+      showFeedback(data.message || data.error || "Failed to fetch tickets");
       return;
     }
 
@@ -51,7 +54,7 @@ function Business() {
     const res = await startTicket(id);
 
     if (res.error) {
-      alert(res.error);
+      showFeedback(res.error, "error");
       return;
     }
 
@@ -62,98 +65,12 @@ function Business() {
     const res = await doneTicket(id);
 
     if (res.error) {
-      alert(res.error);
+      showFeedback(res.error, "error");
       return;
     }
 
     fetchTickets();
   };
-
-  const handleCancel = async (id) => {
-  const reason = prompt("Why are you cancelling this ticket?");
-
-  if (!reason || reason.trim() === "") {
-    alert("Cancellation reason is required");
-    return;
-  }
-
-  const res = await cancelTicket(id, reason.trim());
-
-  if (res.error) {
-    alert(res.error);
-    return;
-  }
-
-  fetchTickets();
-  alert("Ticket cancelled");
-};
-
-  const handleWarn = async (ticket) => {
-    const reason = prompt("Why are you warning this customer?");
-
-    if (!reason || reason.trim() === "") {
-      alert("Warning reason is required");
-      return;
-    }
-
-    const res = await warnCustomer({
-      customer: ticket.user?._id,
-      ticket: ticket._id,
-      reason: reason.trim(),
-    });
-
-    if (res.error) {
-      alert(res.error);
-      return;
-    }
-
-    alert("Customer warned");
-  };
-
-  const handleBlock = async (ticket) => {
-    const reason = prompt("Why are you blocking this customer?");
-
-    if (!reason || reason.trim() === "") {
-      alert("Block reason is required");
-      return;
-    }
-
-    const res = await blockCustomer({
-      customer: ticket.user?._id,
-      ticket: ticket._id,
-      reason: reason.trim(),
-    });
-
-    if (res.error) {
-      alert(res.error);
-      return;
-    }
-
-    fetchTickets();
-    alert("Customer blocked");
-  };
-
-  const handleUnblock = async (ticket) => {
-  const confirmUnblock = window.confirm(
-    `Unblock ${ticket.user?.name || "this customer"}?`
-  );
-
-  if (!confirmUnblock) {
-    return;
-  }
-
-  const res = await unblockCustomer({
-    customer: ticket.user?._id,
-  });
-
-  if (res.error) {
-    alert(res.error);
-    return;
-  }
-
-  await fetchTickets();
-  alert("Customer unblocked");
-};
 
   const activeTickets = tickets.filter((ticket) => ticket.status === "active");
 
@@ -188,8 +105,104 @@ function Business() {
     setOpenTicketId((currentId) => (currentId === id ? null : id));
   };
 
+  const showFeedback = (message, type = "success") => {
+    setFeedbackMessage(message);
+    setFeedbackType(type);
+
+
+    setTimeout(() => {
+      setFeedbackMessage("");
+      setFeedbackType("");
+    }, 3500);
+  };
+
+  const openActionModal = (type, ticket) => {
+    setActionModal({ type, ticket });
+    setActionReason("");
+  };
+
+
+  const closeActionModal = () => {
+    setActionModal(null);
+    setActionReason("");
+  };
+
+  const submitActionModal = async () => {
+    if (!actionModal) return;
+
+
+    if (!actionReason.trim()) {
+      showFeedback("Reason is required", "error");
+      return;
+    }
+
+
+    const { type, ticket } = actionModal;
+
+
+    if (type === "cancel") {
+      const res = await cancelTicket(ticket._id, actionReason.trim());
+
+
+      if (res.error) {
+        showFeedback(res.error, "error");
+        return;
+      }
+
+
+      await fetchTickets();
+      showFeedback("Ticket cancelled", "success");
+    }
+
+
+    if (type === "warn") {
+      const res = await warnCustomer({
+        customer: ticket.user?._id,
+        ticket: ticket._id,
+        reason: actionReason.trim(),
+      });
+
+
+      if (res.error) {
+        showFeedback(res.error, "error");
+        return;
+      }
+
+
+      showFeedback("Customer warned", "success");
+    }
+
+
+    if (type === "block") {
+      const res = await blockCustomer({
+        customer: ticket.user?._id,
+        ticket: ticket._id,
+        reason: actionReason.trim(),
+      });
+
+
+      if (res.error) {
+        showFeedback(res.error, "error");
+        return;
+      }
+
+
+      await fetchTickets();
+      showFeedback("Customer blocked", "success");
+    }
+
+
+    closeActionModal();
+  };
+
   return (
     <div className="dashboard-page">
+      {feedbackMessage && (
+        <div className={`toast-message ${feedbackType}`}>
+          {feedbackMessage}
+        </div>
+      )}
+    
       <div className="dashboard-header">
         <h2 className="dashboard-title">Business Dashboard</h2>
       </div>
@@ -268,7 +281,7 @@ function Business() {
 
                     <button
                       className="dashboard-button danger"
-                      onClick={() => handleCancel(t._id)}
+                      onClick={() => openActionModal("cancel", t)}
                       disabled={!canCancelNoShow(t.started_at)}
                       title={
                         canCancelNoShow(t.started_at)
@@ -281,14 +294,14 @@ function Business() {
                     
                     <button
                       className="dashboard-button secondary"
-                      onClick={() => handleWarn(t)}
+                      onClick={() => openActionModal("warn", t)}
                     >
                       Warn customer
                     </button>
 
                     <button
                       className="dashboard-button danger"
-                      onClick={() => handleBlock(t)}
+                      onClick={() => openActionModal("block", t)}
                     >
                       Block customer
                     </button>
@@ -361,21 +374,21 @@ function Business() {
 
                     <button
                       className="dashboard-button danger"
-                      onClick={() => handleCancel(t._id)}
+                      onClick={() => openActionModal("cancel", t)}
                     >
                       Cancel
                     </button>
 
                     <button
                       className="dashboard-button secondary"
-                      onClick={() => handleWarn(t)}
+                      onClick={() => openActionModal("warn", t)}
                     >
                       Warn customer
                     </button>
 
                     <button
                       className="dashboard-button danger"
-                      onClick={() => handleBlock(t)}
+                      onClick={() => openActionModal("block", t)}
                     >
                       Block customer
                     </button>
@@ -386,7 +399,77 @@ function Business() {
           ))}
         </div>
       </section>
+      {actionModal && (
+        <div className="modal-overlay">
+          <div className="ticket-modal">
+            <button
+              className="modal-close-button"
+              type="button"
+              onClick={closeActionModal}
+            >
+              ×
+            </button>
 
+            <div className="ticket-modal-header">
+              <div>
+                <h3>
+                  {actionModal.type === "cancel" && "Cancel ticket"}
+                  {actionModal.type === "warn" && "Warn customer"}
+                  {actionModal.type === "block" && "Block customer"}
+                </h3>
+                <p>
+                  Customer: {actionModal.ticket.user?.name || "Unknown customer"}
+                </p>
+              </div>
+            </div>
+
+            <p className="modal-helper-text">
+              {actionModal.type === "cancel" &&
+                "Write the reason for cancelling this ticket."}
+              {actionModal.type === "warn" &&
+                "Write the reason for warning this customer."}
+              {actionModal.type === "block" &&
+                "Write the reason for blocking this customer."}
+            </p>
+
+            <div className="form-group">
+              <label>Reason</label>
+
+              <textarea
+                className="dashboard-textarea"
+                placeholder="Write reason..."
+                value={actionReason}
+                onChange={(e) => setActionReason(e.target.value)}
+                maxLength={500}
+              />
+
+              <p className="helper-text">{actionReason.length} / 500</p>
+            </div>
+
+            <div className="ticket-actions modal-actions">
+              <button
+                className="dashboard-button secondary"
+                type="button"
+                onClick={closeActionModal}
+              >
+                Cancel
+              </button>
+
+              <button
+                className={
+                  actionModal.type === "block" || actionModal.type === "cancel"
+                    ? "dashboard-button danger"
+                    : "dashboard-button"
+                }
+                type="button"
+                onClick={submitActionModal}
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

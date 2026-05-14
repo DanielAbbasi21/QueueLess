@@ -7,12 +7,12 @@ function Customer() {
   const [ticketMessage, setTicketMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const [openTicketId, setOpenTicketId] = useState(null);
-  const [ticketBusinessFilter, setTicketBusinessFilter] = useState("");
-
-  
+  const [ticketBusinessFilter, setTicketBusinessFilter] = useState("");  
   const [businessSearch, setBusinessSearch] = useState("");
   const [selectedBusinessForTicket, setSelectedBusinessForTicket] = useState(null);
   const [showTicketModal, setShowTicketModal] = useState(false);
+  const [feedbackMessage, setFeedbackMessage] = useState("");
+  const [feedbackType, setFeedbackType] = useState("");
 
 
   const user = JSON.parse(localStorage.getItem("user") || "null");
@@ -32,12 +32,12 @@ function Customer() {
       if (data.message === "Invalid or expired token" || data.message === "No token provided") {
         localStorage.removeItem("user");
         localStorage.removeItem("token");
-        alert("Your session has expired. Please log in again.");
+        showFeedback("Your session has expired. Please log in again.");
         window.location.reload();
         return;
       }
 
-      alert(data.message || data.error || "Failed to fetch tickets");
+      showFeedback(data.message || data.error || "Failed to fetch tickets", "error");
       return;
     }
 
@@ -58,17 +58,17 @@ function Customer() {
 
   const handleSubmit = async () => {
     if (!user) {
-      alert("You must be logged in");
+      showFeedback("You must be logged in");
       return;
     }
 
     if (!selectedBusinessForTicket) {
-      alert("Please select a business");
+      showFeedback("Please select a business");
       return;
     }
 
     if (!ticketMessage.trim()) {
-      alert("Please write a message");
+      showFeedback("Please write a message");
       return;
     }
 
@@ -81,7 +81,7 @@ function Customer() {
     console.log("Saved:", res);
 
     if (res.error) {
-      alert(res.error);
+      showFeedback(res.error, "error");
       return;
     }
 
@@ -91,26 +91,26 @@ function Customer() {
 
     await fetchMyTickets();
 
-    alert("Ticket created");
+    showFeedback("Ticket created", "success");
   };
 
   const handleCancel = async (id) => {
     const res = await cancelTicket(id);
 
     if (res.error) {
-      alert(res.error);
+      showFeedback(res.error, "error");
       return;
     }
 
     await fetchMyTickets();
-    alert("Ticket cancelled");
+    showFeedback("Ticket cancelled", "success");
   };
 
   const handleEdit = async (ticket) => {
     const newMessage = prompt("Edit your ticket message:", ticket.message);
 
     if (!newMessage || newMessage.trim() === "") {
-      alert("Message is required");
+      showFeedback("Message is required", "error");
       return;
     }
 
@@ -119,12 +119,12 @@ function Customer() {
 
 
     if (res.error) {
-      alert(res.error);
+      showFeedback(res.error, "error");
       return;
     }
 
     await fetchMyTickets();
-    alert("Ticket updated");
+    showFeedback("Ticket updated", "success");
   };
 
   const filteredTickets = ticketBusinessFilter
@@ -145,7 +145,6 @@ function Customer() {
   const getBusinessIcon = (businessName = "") => {
     const name = businessName.toLowerCase();
 
-
     if (name.includes("bank")) return "🏦";
     if (name.includes("barber")) return "✂️";
     if (name.includes("hospital")) return "✚";
@@ -162,7 +161,6 @@ function Customer() {
 
     return "🏢";
   };
-
 
   const getBusinessCategory = (businessName = "") => {
     const name = businessName.toLowerCase();
@@ -221,18 +219,30 @@ function Customer() {
   return (waitingTicketsForBusiness.length + 1) * 5;
 };
 
-const estimatedWaitBeforeSubmit = selectedBusinessForTicket
-  ? getEstimatedWaitForBusiness(selectedBusinessForTicket._id)
-  : 5;
+  const estimatedWaitBeforeSubmit = selectedBusinessForTicket
+    ? getEstimatedWaitForBusiness(selectedBusinessForTicket._id)
+    : 5;
 
+  const showFeedback = (message, type = "success") => {
+  setFeedbackMessage(message);
+  setFeedbackType(type);
+
+  setTimeout(() => {
+    setFeedbackMessage("");
+    setFeedbackType("");
+  }, 3500);
+};
 
   return (
      <div className="dashboard-page">
+      {feedbackMessage && (
+        <p className={`toast-message ${feedbackType}`}>
+          {feedbackMessage}
+        </p>
+      )}
       <div className="dashboard-header">
         <h2 className="dashboard-title">Customer Dashboard</h2>
       </div>
-
-
       <section className="dashboard-section business-discovery">
         <div className="business-discovery-header">
           <h3 className="section-title">Find a Business</h3>
