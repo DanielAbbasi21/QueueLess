@@ -99,9 +99,6 @@ function Inbox() {
       )}
       <div className="dashboard-header">
         <h2 className="dashboard-title">Inbox</h2>
-        <p className="dashboard-subtitle">
-          View updates about your tickets.
-        </p>
       </div>
       <div className="inbox-filter">
         <button

@@ -10,6 +10,7 @@ function Register({ setShowRegister }) {
   const [businessName, setBusinessName] = useState("");
   const [feedbackMessage, setFeedbackMessage] = useState("");
   const [feedbackType, setFeedbackType] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleRegister = async () => {
     if (!name || !email || !password) {
@@ -58,83 +59,102 @@ function Register({ setShowRegister }) {
           {feedbackMessage}
         </div>
       )}
-      <div className="auth-card">
-        <h2 className="auth-title">Register</h2>
-        <p className="auth-subtitle">Create your QueueLess account</p>
 
-        <div className="auth-form">
-          <div className="auth-field">
-            <label>Name</label>
-            <input
-              className="auth-input"
-              type="text"
-              placeholder="Enter your name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-          </div>
+      <div className="auth-wrapper">
+        <img
+          src="/queueless-logo.png"
+          alt="QueueLess logo"
+          className="auth-logo"
+        />
 
-          <div className="auth-field">
-            <label>Email</label>
-            <input
-              className="auth-input"
-              type="email"
-              placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
+        <div className="auth-card">
+          <h2 className="auth-title">Register</h2>
+          <p className="auth-subtitle">Create your QueueLess account</p>
 
-          <div className="auth-field">
-            <label>Password</label>
-            <input
-              className="auth-input"
-              type="password"
-              placeholder="Create a password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-
-          <div className="auth-field">
-            <label>Account type</label>
-            <select
-              className="auth-select"
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-            >
-              <option value="customer">Customer</option>
-              <option value="business">Business</option>
-            </select>
-          </div>
-
-          {role === "business" && (
+          <div className="auth-form">
             <div className="auth-field">
-              <label>Business name</label>
+              <label>Name</label>
               <input
                 className="auth-input"
                 type="text"
-                placeholder="Enter your business name"
-                value={businessName}
-                onChange={(e) => setBusinessName(e.target.value)}
+                placeholder="Enter your name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
               />
             </div>
-          )}
 
-          <button className="auth-button" onClick={handleRegister}>
-            Register
-          </button>
+            <div className="auth-field">
+              <label>Email</label>
+              <input
+                className="auth-input"
+                type="email"
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+
+            <div className="auth-field">
+              <label>Password</label>
+              <div className="password-field">
+                <input
+                  className="auth-input password-input"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Create a password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+
+                <button
+                  className="password-toggle"
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? "Hide" : "Show"}
+                </button>
+              </div>
+            </div>
+
+            <div className="auth-field">
+              <label>Account type</label>
+              <select
+                className="auth-select"
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+              >
+                <option value="customer">Customer</option>
+                <option value="business">Business</option>
+              </select>
+            </div>
+
+            {role === "business" && (
+              <div className="auth-field">
+                <label>Business name</label>
+                <input
+                  className="auth-input"
+                  type="text"
+                  placeholder="Enter your business name"
+                  value={businessName}
+                  onChange={(e) => setBusinessName(e.target.value)}
+                />
+              </div>
+            )}
+
+            <button className="auth-button" onClick={handleRegister}>
+              Register
+            </button>
+          </div>
+
+          <p className="auth-switch">
+            Already have an account?{" "}
+            <button
+              className="auth-link-button"
+              onClick={() => setShowRegister(false)}
+            >
+              Login
+            </button>
+          </p>
         </div>
-
-        <p className="auth-switch">
-          Already have an account?{" "}
-          <button
-            className="auth-link-button"
-            onClick={() => setShowRegister(false)}
-          >
-            Login
-          </button>
-        </p>
       </div>
     </div>
   );

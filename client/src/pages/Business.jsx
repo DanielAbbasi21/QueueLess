@@ -447,13 +447,6 @@ function Business() {
             </div>
 
             <div className="ticket-actions modal-actions">
-              <button
-                className="dashboard-button secondary"
-                type="button"
-                onClick={closeActionModal}
-              >
-                Cancel
-              </button>
 
               <button
                 className={
