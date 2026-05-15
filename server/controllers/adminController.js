@@ -1,6 +1,6 @@
 const User = require("../models/User");
 const Business = require("../models/Business");
-const Ticket = require("../models/Ticket");
+const Ticket = require("../models/ticket");
 const Notification = require("../models/Notification");
 const BusinessBlock = require("../models/BusinessBlock");
 const BusinessWarning = require("../models/BusinessWarning");
