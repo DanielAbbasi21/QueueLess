@@ -1,5 +1,5 @@
 const ticketModel = require("../models/ticketModel");
-const Ticket = require("../models/Ticket");
+const Ticket = require("../models/ticket");
 const Notification = require("../models/Notification");
 const BusinessBlock = require("../models/BusinessBlock");
 const Business = require("../models/Business");
