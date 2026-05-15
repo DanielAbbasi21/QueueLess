@@ -1,6 +1,6 @@
 import Register from "./pages/Register";
 import { useEffect, useState } from "react";
-import Login from "./pages/Login";
+import Login from "./pages/login";
 import Customer from "./pages/Customer";
 import Business from "./pages/Business";
 import Account from "./pages/Account";
