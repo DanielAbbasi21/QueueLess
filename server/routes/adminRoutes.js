@@ -11,14 +11,15 @@ router.get("/stats", verifyToken, verifyAdmin, adminController.getAdminStats);
 router.get("/users", verifyToken, verifyAdmin, adminController.getAdminUsers);
 router.post("/users", verifyToken, verifyAdmin, adminController.createAdminUser);
 router.put("/users/:id", verifyToken, verifyAdmin, adminController.updateAdminUser);
+router.delete("/users/:id", verifyToken, verifyAdmin, adminController.deleteAdminUser);
 
 
 router.get("/businesses", verifyToken, verifyAdmin, adminController.getAdminBusinesses);
 router.put("/businesses/:id", verifyToken, verifyAdmin, adminController.updateAdminBusiness);
+router.delete("/businesses/:id", verifyToken, verifyAdmin, adminController.deleteAdminBusiness);
 
 
 router.get("/tickets", verifyToken, verifyAdmin, adminController.getAdminTickets);
-
 
 
 module.exports = router;

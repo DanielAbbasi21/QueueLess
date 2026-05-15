@@ -275,3 +275,23 @@ export const updateAdminBusiness = async (id, businessData) => {
   return res.json();
 };
 
+export const deleteAdminUser = async (id) => {
+  const res = await fetch(`${API}/admin/users/${id}`, {
+    method: "DELETE",
+    headers: getAuthHeaders(),
+  });
+
+
+  return res.json();
+};
+
+
+export const deleteAdminBusiness = async (id) => {
+  const res = await fetch(`${API}/admin/businesses/${id}`, {
+    method: "DELETE",
+    headers: getAuthHeaders(),
+  });
+
+
+  return res.json();
+};

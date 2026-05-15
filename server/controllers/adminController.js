@@ -407,3 +407,145 @@ exports.updateAdminBusiness = async (req, res) => {
     });
   }
 };
+
+exports.deleteAdminUser = async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+
+    if (req.user.userId === userId) {
+      return res.status(400).json({
+        success: false,
+        message: "You cannot delete your own admin account",
+      });
+    }
+
+
+    const user = await User.findById(userId).populate("business");
+
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+
+    const businessId = user.business?._id || null;
+
+
+    await Ticket.deleteMany({
+      $or: [
+        { user: user._id },
+        ...(businessId ? [{ business: businessId }] : []),
+      ],
+    });
+
+
+    await Notification.deleteMany({
+      $or: [
+        { user: user._id },
+        ...(businessId ? [{ business: businessId }] : []),
+      ],
+    });
+
+
+    await BusinessBlock.deleteMany({
+      $or: [
+        { customer: user._id },
+        { blocked_by: user._id },
+        ...(businessId ? [{ business: businessId }] : []),
+      ],
+    });
+
+
+    await BusinessWarning.deleteMany({
+      $or: [
+        { customer: user._id },
+        { warned_by: user._id },
+        ...(businessId ? [{ business: businessId }] : []),
+      ],
+    });
+
+
+    if (user.role === "business" && businessId) {
+      await Business.findByIdAndDelete(businessId);
+    }
+
+
+    await User.findByIdAndDelete(user._id);
+
+
+    res.json({
+      success: true,
+      message: "Account deleted successfully",
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to delete account",
+      details: err.message,
+    });
+  }
+};
+
+
+exports.deleteAdminBusiness = async (req, res) => {
+  try {
+    const businessId = req.params.id;
+
+
+    const business = await Business.findById(businessId);
+
+
+    if (!business) {
+      return res.status(404).json({
+        success: false,
+        message: "Business not found",
+      });
+    }
+
+
+    const businessUsers = await User.find({ business: businessId });
+
+
+    const businessUserIds = businessUsers.map((user) => user._id);
+
+
+    await Ticket.deleteMany({ business: businessId });
+
+
+    await Notification.deleteMany({
+      $or: [
+        { business: businessId },
+        { user: { $in: businessUserIds } },
+      ],
+    });
+
+
+    await BusinessBlock.deleteMany({ business: businessId });
+
+
+    await BusinessWarning.deleteMany({ business: businessId });
+
+
+    await User.deleteMany({ business: businessId });
+
+
+    await Business.findByIdAndDelete(businessId);
+
+
+    res.json({
+      success: true,
+      message: "Business deleted successfully",
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to delete business",
+      details: err.message,
+    });
+  }
+};
+
