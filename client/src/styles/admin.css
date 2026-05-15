@@ -278,3 +278,12 @@
     max-width: 100%;
   }
 }
+
+.admin-clickable-row {
+  cursor: pointer;
+}
+
+
+.admin-clickable-row:hover {
+  background: var(--accent-bg);
+}

@@ -251,3 +251,27 @@ export const createAdminUser = async (userData) => {
 
   return res.json();
 };
+
+export const updateAdminUser = async (id, userData) => {
+  const res = await fetch(`${API}/admin/users/${id}`, {
+    method: "PUT",
+    headers: getAuthHeaders(),
+    body: JSON.stringify(userData),
+  });
+
+
+  return res.json();
+};
+
+
+export const updateAdminBusiness = async (id, businessData) => {
+  const res = await fetch(`${API}/admin/businesses/${id}`, {
+    method: "PUT",
+    headers: getAuthHeaders(),
+    body: JSON.stringify(businessData),
+  });
+
+
+  return res.json();
+};
+

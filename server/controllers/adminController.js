@@ -102,6 +102,7 @@ exports.getAdminBusinesses = async (req, res) => {
         return {
           _id: business._id,
           name: business.name,
+          category: business.category || "Business Services",
           ticketCount,
         };
       })
@@ -146,7 +147,7 @@ exports.getAdminTickets = async (req, res) => {
 
 exports.createAdminUser = async (req, res) => {
   try {
-    const { name, email, password, role, businessName } = req.body;
+    const { name, email, password, role, businessName, businessCategory } = req.body;
 
 
     if (!name || !email || !password || !role) {
@@ -201,6 +202,7 @@ exports.createAdminUser = async (req, res) => {
 
       const newBusiness = await Business.create({
         name: businessName,
+        category: businessCategory || "Business Services",
       });
 
 
@@ -242,6 +244,165 @@ exports.createAdminUser = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Failed to create account",
+      details: err.message,
+    });
+  }
+};
+
+exports.updateAdminUser = async (req, res) => {
+  try {
+    const { name, email, businessName, businessCategory } = req.body;
+
+
+    if (!name || !email) {
+      return res.status(400).json({
+        success: false,
+        message: "Name and email are required",
+      });
+    }
+
+
+    const user = await User.findById(req.params.id).populate("business");
+
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+
+    const emailExists = await User.findOne({
+      email,
+      _id: { $ne: user._id },
+    });
+
+
+    if (emailExists) {
+      return res.status(400).json({
+        success: false,
+        message: "Another user already uses this email",
+      });
+    }
+
+
+    user.name = name;
+    user.email = email;
+
+
+    await user.save();
+
+
+    if (user.role === "business" && user.business) {
+      if (!businessName) {
+        return res.status(400).json({
+          success: false,
+          message: "Business name is required for business accounts",
+        });
+      }
+
+
+      const businessNameExists = await Business.findOne({
+        name: businessName,
+        _id: { $ne: user.business._id },
+      });
+
+
+      if (businessNameExists) {
+        return res.status(400).json({
+          success: false,
+          message: "Another business already uses this name",
+        });
+      }
+
+
+      await Business.findByIdAndUpdate(
+        user.business._id,
+        {
+          name: businessName,
+          category: businessCategory || "Business Services",
+        },
+        {
+          returnDocument: "after",
+        }
+      );
+    }
+
+
+    const updatedUser = await User.findById(user._id)
+      .select("-password")
+      .populate("business");
+
+
+    res.json({
+      success: true,
+      message: "Account updated successfully",
+      user: updatedUser,
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to update account",
+      details: err.message,
+    });
+  }
+};
+
+exports.updateAdminBusiness = async (req, res) => {
+  try {
+    const { name, category } = req.body;
+
+
+    if (!name) {
+      return res.status(400).json({
+        success: false,
+        message: "Business name is required",
+      });
+    }
+
+
+    const business = await Business.findById(req.params.id);
+
+
+    if (!business) {
+      return res.status(404).json({
+        success: false,
+        message: "Business not found",
+      });
+    }
+
+
+    const existingBusiness = await Business.findOne({
+      name,
+      _id: { $ne: business._id },
+    });
+
+
+    if (existingBusiness) {
+      return res.status(400).json({
+        success: false,
+        message: "Another business already uses this name",
+      });
+    }
+
+
+    business.name = name;
+    business.category = category || "Business Services";
+
+
+    await business.save();
+
+
+    res.json({
+      success: true,
+      message: "Business updated successfully",
+      business,
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to update business",
       details: err.message,
     });
   }
