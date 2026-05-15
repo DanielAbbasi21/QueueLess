@@ -9,6 +9,7 @@ function Customer() {
   const [openTicketId, setOpenTicketId] = useState(null);
   const [ticketBusinessFilter, setTicketBusinessFilter] = useState("");  
   const [businessSearch, setBusinessSearch] = useState("");
+  const [showBusinesses, setShowBusinesses] = useState(true);
   const [selectedBusinessForTicket, setSelectedBusinessForTicket] = useState(null);
   const [showTicketModal, setShowTicketModal] = useState(false);
   const [feedbackMessage, setFeedbackMessage] = useState("");
@@ -17,6 +18,7 @@ function Customer() {
   const [editTicketMessage, setEditTicketMessage] = useState("");
   const [estimatedWaitBeforeSubmit, setEstimatedWaitBeforeSubmit] = useState(5);
   const [estimatedWaitLoading, setEstimatedWaitLoading] = useState(false);
+
 
   const user = JSON.parse(localStorage.getItem("user") || "null");
 
@@ -272,51 +274,63 @@ const closeEditModal = () => {
       <section className="dashboard-section business-discovery">
         <div className="business-discovery-header">
           <h3 className="section-title">Find a Business</h3>
+
+          <button
+            className="dashboard-button secondary"
+            type="button"
+            onClick={() => setShowBusinesses(!showBusinesses)}
+          >
+            {showBusinesses ? "Hide businesses" : "Show businesses"}
+          </button>
         </div>
 
-        <div className="business-search-wrapper">
-          <span className="business-search-icon">⌕</span>
+      {showBusinesses && (
+        <>
+          <div className="business-search-wrapper">
+            <span className="business-search-icon">⌕</span>
 
-          <input
-            className="business-search-input"
-            type="text"
-            placeholder="Search for a business..."
-            value={businessSearch}
-            onChange={(e) => setBusinessSearch(e.target.value)}
-          />
-        </div>
+            <input
+              className="business-search-input"
+              type="text"
+              placeholder="Search for a business..."
+              value={businessSearch}
+              onChange={(e) => setBusinessSearch(e.target.value)}
+            />
+          </div>
 
-        <div className="business-card-grid">
-          {filteredBusinesses.map((business) => (
-            <button
-              className="business-option-card"
-              key={business._id}
-              type="button"
-              onClick={() => {
-                setSelectedBusinessForTicket(business);
-                setShowTicketModal(true);
-                fetchEstimatedWaitForBusiness(business._id);
-              }}
-            >
-              <div className="business-option-icon">
-                {getBusinessIcon(business.name)}
-              </div>
+          <div className="business-card-grid">
+            {filteredBusinesses.map((business) => (
+              <button
+                className="business-option-card"
+                key={business._id}
+                type="button"
+                onClick={() => {
+                  setSelectedBusinessForTicket(business);
+                  setShowTicketModal(true);
+                  fetchEstimatedWaitForBusiness(business._id);
+                }}
+              >
+                <div className="business-option-icon">
+                  {getBusinessIcon(business.name)}
+                </div>
 
-              <div className="business-option-content">
-                <h4>{business.name}</h4>
-                <p>{getBusinessCategory(business.name)}</p>
-              </div>
+                <div className="business-option-content">
+                  <h4>{business.name}</h4>
+                  <p>{getBusinessCategory(business.name)}</p>
+                </div>
 
-              <span className="business-option-arrow">
-                <span className="business-option-arrow-icon">›</span>
-              </span>
-            </button>
-          ))}
-        </div>
+                <span className="business-option-arrow">
+                  <span className="business-option-arrow-icon">›</span>
+                </span>
+              </button>
+            ))}
+          </div>
 
-        {filteredBusinesses.length === 0 && (
-          <p className="empty-message">No businesses match your search.</p>
-        )}
+          {filteredBusinesses.length === 0 && (
+            <p className="empty-message">No businesses match your search.</p>
+          )}
+        </>
+      )}
       </section>
 
        {currentTicketBusinesses.length > 0 && (
