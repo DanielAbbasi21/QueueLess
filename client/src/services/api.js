@@ -295,3 +295,16 @@ export const deleteAdminBusiness = async (id) => {
 
   return res.json();
 };
+
+export const changePassword = async ({ currentPassword, newPassword }) => {
+  const res = await fetch(`${API}/auth/change-password`, {
+    method: "PUT",
+    headers: getAuthHeaders(),
+    body: JSON.stringify({
+      currentPassword,
+      newPassword,
+    }),
+  });
+
+  return res.json();
+};
