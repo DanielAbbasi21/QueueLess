@@ -5,6 +5,8 @@ import {
   getAdminBusinesses,
   getAdminTickets,
   createAdminUser,
+  updateAdminUser,
+  updateAdminBusiness
 } from "../services/api";
 
 function Admin() {
@@ -26,6 +28,21 @@ function Admin() {
     password: "",
     role: "customer",
     businessName: "",
+  });
+
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [editUserForm, setEditUserForm] = useState({
+    name: "",
+    email: "",
+    businessName: "",
+    businessCategory: "",
+  });
+
+
+  const [selectedBusiness, setSelectedBusiness] = useState(null);
+  const [editBusinessForm, setEditBusinessForm] = useState({
+    name: "",
+    category: "",
   });
 
 
@@ -88,6 +105,117 @@ const handleCreateAccount = async () => {
   closeCreateModal();
   await fetchAdminData(ticketStatusFilter);
   showFeedback("Account created successfully", "success");
+};
+
+const openUserModal = (user) => {
+  setSelectedUser(user);
+  setEditUserForm({
+    name: user.name || "",
+    email: user.email || "",
+    businessName: user.business?.name || "",
+    businessCategory: user.business?.category || "Business Services",
+  });
+};
+
+
+const closeUserModal = () => {
+  setSelectedUser(null);
+  setEditUserForm({
+    name: "",
+    email: "",
+    businessName: "",
+    businessCategory: "",
+  });
+};
+
+
+const updateEditUserForm = (field, value) => {
+  setEditUserForm((currentForm) => ({
+    ...currentForm,
+    [field]: value,
+  }));
+};
+
+
+const handleUpdateUser = async () => {
+  if (!selectedUser) return;
+
+
+  if (!editUserForm.name || !editUserForm.email) {
+    showFeedback("Name and email are required", "error");
+    return;
+  }
+
+
+  if (selectedUser.role === "business" && !editUserForm.businessName) {
+    showFeedback("Business name is required", "error");
+    return;
+  }
+
+
+  const res = await updateAdminUser(selectedUser._id, editUserForm);
+
+
+  if (!res.success) {
+    showFeedback(res.message || "Failed to update account", "error");
+    return;
+  }
+
+
+  closeUserModal();
+  await fetchAdminData(ticketStatusFilter);
+  showFeedback("Account updated successfully", "success");
+};
+
+
+const openBusinessModal = (business) => {
+  setSelectedBusiness(business);
+  setEditBusinessForm({
+    name: business.name || "",
+    category: business.category || "Business Services",
+  });
+};
+
+
+const closeBusinessModal = () => {
+  setSelectedBusiness(null);
+  setEditBusinessForm({
+    name: "",
+    category: "",
+  });
+};
+
+
+const updateEditBusinessForm = (field, value) => {
+  setEditBusinessForm((currentForm) => ({
+    ...currentForm,
+    [field]: value,
+  }));
+};
+
+
+const handleUpdateBusiness = async () => {
+  if (!selectedBusiness) return;
+
+
+  if (!editBusinessForm.name) {
+    showFeedback("Business name is required", "error");
+    return;
+  }
+
+
+  const res = await updateAdminBusiness(selectedBusiness._id, editBusinessForm);
+
+
+  if (!res.success) {
+    showFeedback(res.message || "Failed to update business", "error");
+    return;
+  }
+
+
+  closeBusinessModal();
+  await fetchAdminData(ticketStatusFilter);
+  showFeedback("Business updated successfully", "success");
 };
 
   const fetchAdminData = async (status = ticketStatusFilter) => {
@@ -315,7 +443,11 @@ const handleCreateAccount = async () => {
               </div>
 
               {filteredUsers.map((user) => (
-                <div className="admin-table-row" key={user._id}>
+                <div
+                  className="admin-table-row admin-clickable-row"
+                  key={user._id}
+                  onClick={() => openUserModal(user)}
+                >
                   <span>{user.name}</span>
                   <span>{user.email}</span>
                   <span>{user.role}</span>
@@ -347,12 +479,18 @@ const handleCreateAccount = async () => {
             <div className="admin-table">
               <div className="admin-table-row admin-table-head">
                 <span>Business</span>
+                <span>Category</span>
                 <span>Tickets</span>
               </div>
 
               {filteredBusinesses.map((business) => (
-                <div className="admin-table-row" key={business._id}>
+                <div
+                  className="admin-table-row admin-clickable-row"
+                  key={business._id}
+                  onClick={() => openBusinessModal(business)}
+                >
                   <span>{business.name}</span>
+                  <span>{business.category || "Business Services"}</span>
                   <span>{business.ticketCount}</span>
                 </div>
               ))}
@@ -519,6 +657,147 @@ const handleCreateAccount = async () => {
                 onClick={handleCreateAccount}
               >
                 Create account
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {selectedUser && (
+        <div className="modal-overlay">
+          <div className="ticket-modal">
+            <button
+              className="modal-close-button"
+              type="button"
+              onClick={closeUserModal}
+            >
+              <span className="modal-close-icon">×</span>
+            </button>
+
+
+            <div className="ticket-modal-header">
+              <div>
+                <h3>Edit account</h3>
+                <p>
+                  {selectedUser.role} account · {selectedUser.email}
+                </p>
+              </div>
+            </div>
+
+
+            <div className="form-group">
+              <label>Name</label>
+              <input
+                className="dashboard-input"
+                type="text"
+                value={editUserForm.name}
+                onChange={(e) => updateEditUserForm("name", e.target.value)}
+              />
+
+
+              <label>Email</label>
+              <input
+                className="dashboard-input"
+                type="email"
+                value={editUserForm.email}
+                onChange={(e) => updateEditUserForm("email", e.target.value)}
+              />
+
+
+              <label>Role</label>
+              <input
+                className="dashboard-input"
+                type="text"
+                value={selectedUser.role}
+                disabled
+              />
+
+
+              {selectedUser.role === "business" && (
+                <>
+                  <label>Business name</label>
+                  <input
+                    className="dashboard-input"
+                    type="text"
+                    value={editUserForm.businessName}
+                    onChange={(e) => updateEditUserForm("businessName", e.target.value)}
+                  />
+
+
+                  <label>Business category</label>
+                  <input
+                    className="dashboard-input"
+                    type="text"
+                    value={editUserForm.businessCategory}
+                    onChange={(e) =>
+                      updateEditUserForm("businessCategory", e.target.value)
+                    }
+                  />
+                </>
+              )}
+            </div>
+
+
+            <div className="ticket-actions modal-actions">
+              <button
+                className="dashboard-button"
+                type="button"
+                onClick={handleUpdateUser}
+              >
+                Save changes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {selectedBusiness && (
+        <div className="modal-overlay">
+          <div className="ticket-modal">
+            <button
+              className="modal-close-button"
+              type="button"
+              onClick={closeBusinessModal}
+            >
+              <span className="modal-close-icon">×</span>
+            </button>
+
+
+            <div className="ticket-modal-header">
+              <div>
+                <h3>Edit business</h3>
+                <p>Update business information.</p>
+              </div>
+            </div>
+
+
+            <div className="form-group">
+              <label>Business name</label>
+              <input
+                className="dashboard-input"
+                type="text"
+                value={editBusinessForm.name}
+                onChange={(e) => updateEditBusinessForm("name", e.target.value)}
+              />
+
+
+              <label>Business category</label>
+              <input
+                className="dashboard-input"
+                type="text"
+                value={editBusinessForm.category}
+                onChange={(e) => updateEditBusinessForm("category", e.target.value)}
+              />
+            </div>
+
+
+            <div className="ticket-actions modal-actions">
+              <button
+                className="dashboard-button"
+                type="button"
+                onClick={handleUpdateBusiness}
+              >
+                Save changes
               </button>
             </div>
           </div>
