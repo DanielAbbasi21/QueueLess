@@ -1,4 +1,4 @@
-const Ticket = require("./ticket");
+const Ticket = require("./Ticket");
 
 exports.createTicket = async (user, business, message) => {
   return await Ticket.create({
