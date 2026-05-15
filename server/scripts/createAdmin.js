@@ -11,18 +11,30 @@ const createAdmin = async () => {
     });
 
     const adminData = {
-      name: "QueueLess Admin",
-      email: "admin@queueless.com",
-      password: "Admin123",
-      role: "admin",
-      business: null,
-    };
+        name: process.env.ADMIN_NAME,
+        email: process.env.ADMIN_EMAIL,
+        password: process.env.ADMIN_PASSWORD,
+        role: "admin",
+        business: null,
+        };
+
+    if (!adminData.name || !adminData.email || !adminData.password) {
+        console.log("ADMIN_NAME, ADMIN_EMAIL and ADMIN_PASSWORD are required");
+        process.exit(1);
+        }
 
     const existingAdmin = await User.findOne({ email: adminData.email });
 
     if (existingAdmin) {
-      console.log("Admin already exists with this email");
-      process.exit(0);
+        existingAdmin.name = adminData.name;
+        existingAdmin.password = await bcrypt.hash(adminData.password, 10);
+        existingAdmin.role = "admin";
+        existingAdmin.business = null;
+
+        await existingAdmin.save();
+
+        console.log("Admin account updated successfully");
+        process.exit(0);
     }
 
     const hashedPassword = await bcrypt.hash(adminData.password, 10);
