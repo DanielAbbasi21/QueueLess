@@ -12,24 +12,40 @@ const getAverageServiceTime = async (businessId) => {
   const completedTickets = await Ticket.find({
     business: businessId,
     status: "done",
-    started_at: { $exists: true },
-    completed_at: { $exists: true },
+    started_at: { $exists: true, $ne: null },
+    completed_at: { $exists: true, $ne: null },
   });
 
-  if (completedTickets.length === 0) {
+  const validServiceTimes = completedTickets
+    .map((ticket) => {
+      const started = new Date(ticket.started_at).getTime();
+      const completed = new Date(ticket.completed_at).getTime();
+
+      return (completed - started) / 1000 / 60;
+    })
+    .filter((minutes) => minutes > 0 && minutes <= 30);
+
+  if (validServiceTimes.length === 0) {
     return 5;
   }
 
-  const totalMinutes = completedTickets.reduce((sum, ticket) => {
-    const started = new Date(ticket.started_at);
-    const completed = new Date(ticket.completed_at);
+  const totalMinutes = validServiceTimes.reduce(
+    (sum, minutes) => sum + minutes,
+    0
+  );
 
-    const diffMinutes = (completed - started) / 1000 / 60;
+  return Math.ceil(totalMinutes / validServiceTimes.length);
+};
 
-    return sum + diffMinutes;
-  }, 0);
+exports.getEstimatedWaitForBusiness = async (businessId) => {
+  const waitingTicketsForBusiness = await Ticket.find({
+    business: businessId,
+    status: "waiting",
+  });
 
-  return Math.ceil(totalMinutes / completedTickets.length);
+  const averageServiceTime = await getAverageServiceTime(businessId);
+
+  return (waitingTicketsForBusiness.length + 1) * averageServiceTime;
 };
 
 exports.getAllTickets = async (business, user) => {

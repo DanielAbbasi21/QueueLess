@@ -52,6 +52,33 @@ exports.getTickets = async (req, res) => {
   }
 };
 
+exports.getEstimatedWaitForBusiness = async (req, res) => {
+  try {
+    const { businessId } = req.params;
+
+    if (!businessId) {
+      return res.status(400).json({
+        success: false,
+        message: "Business ID is required",
+      });
+    }
+
+    const estimatedWaitTime =
+      await ticketModel.getEstimatedWaitForBusiness(businessId);
+
+    res.json({
+      success: true,
+      estimatedWaitTime,
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to calculate estimated wait time",
+      details: err.message,
+    });
+  }
+};
+
 exports.startTicket = async (req, res) => {
   try {
     if (req.user.role !== "business") {

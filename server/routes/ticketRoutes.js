@@ -5,6 +5,11 @@ const { verifyToken } = require("../middleware/authMiddleware");
 
 router.post("/", verifyToken, ticketController.createTicket);
 router.get("/", verifyToken, ticketController.getTickets);
+router.get(
+  "/estimated-wait/:businessId",
+  verifyToken,
+  ticketController.getEstimatedWaitForBusiness
+);
 router.put("/start/:id", verifyToken, ticketController.startTicket);
 router.put("/done/:id", verifyToken, ticketController.doneTicket);
 router.put("/cancel/:id", verifyToken, ticketController.cancelTicket);
