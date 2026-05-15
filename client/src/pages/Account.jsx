@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getMe, deleteMyAccount } from "../services/api";
+import { getMe, deleteMyAccount, changePassword } from "../services/api";
 
 
 function Account() {
@@ -9,7 +9,16 @@ function Account() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [feedbackMessage, setFeedbackMessage] = useState("");
   const [feedbackType, setFeedbackType] = useState("");
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [passwordForm, setPasswordForm] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
 
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const showFeedback = (message, type = "error") => {
     setFeedbackMessage(message);
@@ -89,6 +98,59 @@ function Account() {
     );
   }
 
+  const closePasswordModal = () => {
+    setShowPasswordModal(false);
+    setPasswordForm({
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    });
+    setShowCurrentPassword(false);
+    setShowNewPassword(false);
+    setShowConfirmPassword(false);
+  };
+
+  const updatePasswordForm = (field, value) => {
+    setPasswordForm((currentForm) => ({
+      ...currentForm,
+      [field]: value,
+    }));
+  };
+
+  const handleChangePassword = async () => {
+    if (
+      !passwordForm.currentPassword ||
+      !passwordForm.newPassword ||
+      !passwordForm.confirmPassword
+    ) {
+      showFeedback("All password fields are required", "error");
+      return;
+    }
+
+    if (passwordForm.newPassword.length < 6) {
+      showFeedback("New password must be at least 6 characters long", "error");
+      return;
+    }
+
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      showFeedback("New passwords do not match", "error");
+      return;
+    }
+
+    const res = await changePassword({
+      currentPassword: passwordForm.currentPassword,
+      newPassword: passwordForm.newPassword,
+    });
+
+    if (!res.success) {
+      showFeedback(res.message || "Failed to change password", "error");
+      return;
+    }
+
+    closePasswordModal();
+    showFeedback("Password changed successfully", "success");
+  };
+
 
   return (
     <div className="dashboard-page account-page">
@@ -133,10 +195,17 @@ function Account() {
 
 
         <div className="ticket-actions account-actions">
+          <button
+            className="dashboard-button secondary"
+            type="button"
+            onClick={() => setShowPasswordModal(true)}
+          >
+            Change password
+          </button>
+
           <button className="dashboard-button danger" onClick={handleLogout}>
             Logout
           </button>
-
 
           <button
             className="dashboard-button danger"
@@ -180,6 +249,106 @@ function Account() {
                 onClick={confirmLogout}
               >
                 Log out
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showPasswordModal && (
+        <div className="modal-overlay">
+          <div className="ticket-modal">
+            <button
+              className="modal-close-button"
+              type="button"
+              onClick={closePasswordModal}
+            >
+              <span className="modal-close-icon">×</span>
+            </button>
+
+            <div className="ticket-modal-header">
+              <div>
+                <h3>Change password</h3>
+                <p>Update your account password.</p>
+              </div>
+            </div>
+
+            <p className="modal-helper-text">
+              Use a strong password that you do not use on other websites.
+            </p>
+
+            <div className="form-group">
+              <label>Current password</label>
+              <div className="password-field">
+                <input
+                  className="dashboard-input password-input"
+                  type={showCurrentPassword ? "text" : "password"}
+                  placeholder="Enter current password"
+                  value={passwordForm.currentPassword}
+                  onChange={(e) =>
+                    updatePasswordForm("currentPassword", e.target.value)
+                  }
+                />
+
+                <button
+                  className="password-toggle"
+                  type="button"
+                  onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                >
+                  {showCurrentPassword ? "Hide" : "Show"}
+                </button>
+              </div>
+
+              <label>New password</label>
+              <div className="password-field">
+                <input
+                  className="dashboard-input password-input"
+                  type={showNewPassword ? "text" : "password"}
+                  placeholder="Enter new password"
+                  value={passwordForm.newPassword}
+                  onChange={(e) =>
+                    updatePasswordForm("newPassword", e.target.value)
+                  }
+                />
+
+                <button
+                  className="password-toggle"
+                  type="button"
+                  onClick={() => setShowNewPassword(!showNewPassword)}
+                >
+                  {showNewPassword ? "Hide" : "Show"}
+                </button>
+              </div>
+
+              <label>Confirm new password</label>
+              <div className="password-field">
+                <input
+                  className="dashboard-input password-input"
+                  type={showConfirmPassword ? "text" : "password"}
+                  placeholder="Confirm new password"
+                  value={passwordForm.confirmPassword}
+                  onChange={(e) =>
+                    updatePasswordForm("confirmPassword", e.target.value)
+                  }
+                />
+
+                <button
+                  className="password-toggle"
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                >
+                  {showConfirmPassword ? "Hide" : "Show"}
+                </button>
+              </div>
+            </div>
+
+            <div className="ticket-actions modal-actions">
+              <button
+                className="dashboard-button"
+                type="button"
+                onClick={handleChangePassword}
+              >
+                Save password
               </button>
             </div>
           </div>
