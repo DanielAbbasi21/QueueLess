@@ -178,9 +178,11 @@ exports.blockCustomer = async (req, res) => {
         message: `You have been blocked by this business. Reason: ${reason.trim()}`,
       });
 
-res.status(201).json(block);
-
-      res.status(201).json(block);
+      return res.status(201).json({
+        success: true,
+        message: "Customer blocked successfully",
+        block,
+      });
     } catch (err) {
       res.status(500).json({
         error: "Failed to block customer",
