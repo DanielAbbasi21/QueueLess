@@ -157,15 +157,18 @@ exports.blockCustomer = async (req, res) => {
         blocked_by: req.user.userId,
       });
 
-      await Ticket.findByIdAndUpdate(
-        ticket,
+      await Ticket.updateMany(
+        {
+          user: customer,
+          business: req.user.business,
+          status: { $in: ["waiting", "active"] },
+        },
         {
           status: "blocked",
           cancelled_at: new Date(),
           cancelled_reason: `Customer blocked. Reason: ${reason.trim()}`,
           cancelled_by: "business",
-        },
-        { returnDocument: "after" }
+        }
       );
 
       await Notification.create({
@@ -174,6 +177,8 @@ exports.blockCustomer = async (req, res) => {
         type: "customer_blocked",
         message: `You have been blocked by this business. Reason: ${reason.trim()}`,
       });
+
+res.status(201).json(block);
 
       res.status(201).json(block);
     } catch (err) {
