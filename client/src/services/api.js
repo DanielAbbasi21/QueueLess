@@ -240,3 +240,14 @@ export const getAdminTickets = async (status = "all") => {
 
   return res.json();
 };
+
+export const createAdminUser = async (userData) => {
+  const res = await fetch(`${API}/admin/users`, {
+    method: "POST",
+    headers: getAuthHeaders(),
+    body: JSON.stringify(userData),
+  });
+
+
+  return res.json();
+};

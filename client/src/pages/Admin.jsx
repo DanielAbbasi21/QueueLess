@@ -4,6 +4,7 @@ import {
   getAdminUsers,
   getAdminBusinesses,
   getAdminTickets,
+  createAdminUser,
 } from "../services/api";
 
 function Admin() {
@@ -18,6 +19,16 @@ function Admin() {
   const [userSearch, setUserSearch] = useState("");
   const [businessSearch, setBusinessSearch] = useState("");
 
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [createAccountForm, setCreateAccountForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+    role: "customer",
+    businessName: "",
+  });
+
+
   const showFeedback = (message, type = "error") => {
     setFeedbackMessage(message);
     setFeedbackType(type);
@@ -27,6 +38,57 @@ function Admin() {
       setFeedbackType("");
     }, 3500);
   };
+
+  const updateCreateAccountForm = (field, value) => {
+  setCreateAccountForm((currentForm) => ({
+    ...currentForm,
+    [field]: value,
+  }));
+};
+
+
+const closeCreateModal = () => {
+  setShowCreateModal(false);
+  setCreateAccountForm({
+    name: "",
+    email: "",
+    password: "",
+    role: "customer",
+    businessName: "",
+  });
+};
+
+
+const handleCreateAccount = async () => {
+  if (
+    !createAccountForm.name ||
+    !createAccountForm.email ||
+    !createAccountForm.password
+  ) {
+    showFeedback("Name, email and password are required", "error");
+    return;
+  }
+
+
+  if (createAccountForm.role === "business" && !createAccountForm.businessName) {
+    showFeedback("Business name is required", "error");
+    return;
+  }
+
+
+  const res = await createAdminUser(createAccountForm);
+
+
+  if (!res.success) {
+    showFeedback(res.message || "Failed to create account", "error");
+    return;
+  }
+
+
+  closeCreateModal();
+  await fetchAdminData(ticketStatusFilter);
+  showFeedback("Account created successfully", "success");
+};
 
   const fetchAdminData = async (status = ticketStatusFilter) => {
       setLoading(true);
@@ -123,12 +185,11 @@ function Admin() {
         </div>
 
         <button
-            className="admin-refresh-button"
+            className="dashboard-button"
             type="button"
-            onClick={() => fetchAdminData(ticketStatusFilter)}
-            title="Refresh data"
+            onClick={() => setShowCreateModal(true)}
         >
-            <span className="admin-refresh-icon">⟳</span>
+          Create account
         </button>
       </div>
 
@@ -371,6 +432,98 @@ function Admin() {
           )}
         </div>
       </section>
+
+      {showCreateModal && (
+        <div className="modal-overlay">
+          <div className="ticket-modal">
+            <button
+              className="modal-close-button"
+              type="button"
+              onClick={closeCreateModal}
+            >
+              <span className="modal-close-icon">×</span>
+            </button>
+
+
+            <div className="ticket-modal-header">
+              <div>
+                <h3>Create account</h3>
+                <p>Create a new customer or business account.</p>
+              </div>
+            </div>
+
+
+            <div className="form-group">
+              <label>Name</label>
+              <input
+                className="dashboard-input"
+                type="text"
+                placeholder="Enter full name"
+                value={createAccountForm.name}
+                onChange={(e) => updateCreateAccountForm("name", e.target.value)}
+              />
+
+
+              <label>Email</label>
+              <input
+                className="dashboard-input"
+                type="email"
+                placeholder="Enter email"
+                value={createAccountForm.email}
+                onChange={(e) => updateCreateAccountForm("email", e.target.value)}
+              />
+
+
+              <label>Password</label>
+              <input
+                className="dashboard-input"
+                type="password"
+                placeholder="Enter password"
+                value={createAccountForm.password}
+                onChange={(e) => updateCreateAccountForm("password", e.target.value)}
+              />
+
+
+              <label>Role</label>
+              <select
+                className="dashboard-select"
+                value={createAccountForm.role}
+                onChange={(e) => updateCreateAccountForm("role", e.target.value)}
+              >
+                <option value="customer">Customer</option>
+                <option value="business">Business</option>
+              </select>
+
+
+              {createAccountForm.role === "business" && (
+                <>
+                  <label>Business name</label>
+                  <input
+                    className="dashboard-input"
+                    type="text"
+                    placeholder="Enter business name"
+                    value={createAccountForm.businessName}
+                    onChange={(e) =>
+                      updateCreateAccountForm("businessName", e.target.value)
+                    }
+                  />
+                </>
+              )}
+            </div>
+
+
+            <div className="ticket-actions modal-actions">
+              <button
+                className="dashboard-button"
+                type="button"
+                onClick={handleCreateAccount}
+              >
+                Create account
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
