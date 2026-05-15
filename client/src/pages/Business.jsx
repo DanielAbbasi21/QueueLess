@@ -407,7 +407,7 @@ function Business() {
               type="button"
               onClick={closeActionModal}
             >
-              ×
+              <span className="modal-close-icon">×</span>
             </button>
 
             <div className="ticket-modal-header">
