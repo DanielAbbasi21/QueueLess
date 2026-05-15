@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getBusinesses, createTicket, getMyTickets, cancelTicket, editTicket } from "../services/api";
+import { getBusinesses, createTicket, getMyTickets, cancelTicket, editTicket, getEstimatedWaitForBusiness, } from "../services/api";
 
 function Customer() {
   const [businesses, setBusinesses] = useState([]);
@@ -15,6 +15,8 @@ function Customer() {
   const [feedbackType, setFeedbackType] = useState("");
   const [editModalTicket, setEditModalTicket] = useState(null);
   const [editTicketMessage, setEditTicketMessage] = useState("");
+  const [estimatedWaitBeforeSubmit, setEstimatedWaitBeforeSubmit] = useState(5);
+  const [estimatedWaitLoading, setEstimatedWaitLoading] = useState(false);
 
   const user = JSON.parse(localStorage.getItem("user") || "null");
 
@@ -89,6 +91,9 @@ function Customer() {
     setTicketMessage("");
     setSelectedBusinessForTicket(null);
     setShowTicketModal(false);
+    setEstimatedWaitBeforeSubmit(5);
+    setEstimatedWaitLoading(false);
+
 
     await fetchMyTickets();
 
@@ -216,22 +221,33 @@ const closeEditModal = () => {
     setShowTicketModal(false);
     setSelectedBusinessForTicket(null);
     setTicketMessage("");
+    setEstimatedWaitBeforeSubmit(5);
+      setEstimatedWaitLoading(false);
+
   };
 
-  const getEstimatedWaitForBusiness = (businessId) => {
-  if (!businessId) return 5;
+  const fetchEstimatedWaitForBusiness = async (businessId) => {
+    if (!businessId) {
+      setEstimatedWaitBeforeSubmit(5);
+      return;
+    }
 
-  const waitingTicketsForBusiness = tickets.filter(
-    (ticket) =>
-      ticket.business?._id === businessId && ticket.status === "waiting"
-  );
+    setEstimatedWaitLoading(true);
 
-  return (waitingTicketsForBusiness.length + 1) * 5;
-};
 
-  const estimatedWaitBeforeSubmit = selectedBusinessForTicket
-    ? getEstimatedWaitForBusiness(selectedBusinessForTicket._id)
-    : 5;
+    const res = await getEstimatedWaitForBusiness(businessId);
+
+    if (!res.success) {
+      setEstimatedWaitBeforeSubmit(5);
+        setEstimatedWaitLoading(false);
+
+      return;
+    }
+
+    setEstimatedWaitBeforeSubmit(res.estimatedWaitTime);
+      setEstimatedWaitLoading(false);
+
+  };
 
   const showFeedback = (message, type = "success") => {
   setFeedbackMessage(message);
@@ -279,6 +295,7 @@ const closeEditModal = () => {
               onClick={() => {
                 setSelectedBusinessForTicket(business);
                 setShowTicketModal(true);
+                fetchEstimatedWaitForBusiness(business._id);
               }}
             >
               <div className="business-option-icon">
@@ -440,7 +457,11 @@ const closeEditModal = () => {
 
             <div className="estimated-wait-preview">
               <span>Estimated wait</span>
-              <strong>{estimatedWaitBeforeSubmit} minutes</strong>
+              <strong>
+                {estimatedWaitLoading
+                  ? "Calculating..."
+                  : `${estimatedWaitBeforeSubmit} minutes`}
+              </strong>
             </div>
 
             <div className="form-group">

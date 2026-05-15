@@ -308,3 +308,11 @@ export const changePassword = async ({ currentPassword, newPassword }) => {
 
   return res.json();
 };
+
+export const getEstimatedWaitForBusiness = async (businessId) => {
+  const res = await fetch(`${API}/tickets/estimated-wait/${businessId}`, {
+    headers: getAuthHeaders(),
+  });
+
+  return res.json();
+};
