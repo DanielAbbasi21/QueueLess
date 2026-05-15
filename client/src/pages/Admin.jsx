@@ -6,7 +6,9 @@ import {
   getAdminTickets,
   createAdminUser,
   updateAdminUser,
-  updateAdminBusiness
+  updateAdminBusiness,
+  deleteAdminUser,
+  deleteAdminBusiness
 } from "../services/api";
 
 function Admin() {
@@ -45,6 +47,8 @@ function Admin() {
     category: "",
   });
 
+  const [deleteUserModal, setDeleteUserModal] = useState(null);
+  const [deleteBusinessModal, setDeleteBusinessModal] = useState(null);
 
   const showFeedback = (message, type = "error") => {
     setFeedbackMessage(message);
@@ -216,6 +220,45 @@ const handleUpdateBusiness = async () => {
   closeBusinessModal();
   await fetchAdminData(ticketStatusFilter);
   showFeedback("Business updated successfully", "success");
+};
+
+const handleDeleteUser = async () => {
+  if (!deleteUserModal) return;
+
+
+  const res = await deleteAdminUser(deleteUserModal._id);
+
+
+  if (!res.success) {
+    showFeedback(res.message || "Failed to delete account", "error");
+    return;
+  }
+
+
+  setDeleteUserModal(null);
+  closeUserModal();
+  await fetchAdminData(ticketStatusFilter);
+  showFeedback("Account deleted successfully", "success");
+};
+
+
+const handleDeleteBusiness = async () => {
+  if (!deleteBusinessModal) return;
+
+
+  const res = await deleteAdminBusiness(deleteBusinessModal._id);
+
+
+  if (!res.success) {
+    showFeedback(res.message || "Failed to delete business", "error");
+    return;
+  }
+
+
+  setDeleteBusinessModal(null);
+  closeBusinessModal();
+  await fetchAdminData(ticketStatusFilter);
+  showFeedback("Business deleted successfully", "success");
 };
 
   const fetchAdminData = async (status = ticketStatusFilter) => {
@@ -738,7 +781,16 @@ const handleUpdateBusiness = async () => {
             </div>
 
 
-            <div className="ticket-actions modal-actions">
+            <div className="ticket-actions modal-actions admin-modal-actions">
+              <button
+                className="dashboard-button danger"
+                type="button"
+                onClick={() => setDeleteUserModal(selectedUser)}
+              >
+                Delete account
+              </button>
+
+
               <button
                 className="dashboard-button"
                 type="button"
@@ -791,13 +843,104 @@ const handleUpdateBusiness = async () => {
             </div>
 
 
-            <div className="ticket-actions modal-actions">
+            <div className="ticket-actions modal-actions admin-modal-actions">
+              <button
+                className="dashboard-button danger"
+                type="button"
+                onClick={() => setDeleteBusinessModal(selectedBusiness)}
+              >
+                Delete business
+              </button>
+
+
               <button
                 className="dashboard-button"
                 type="button"
                 onClick={handleUpdateBusiness}
               >
                 Save changes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {deleteUserModal && (
+        <div className="modal-overlay">
+          <div className="ticket-modal">
+            <button
+              className="modal-close-button"
+              type="button"
+              onClick={() => setDeleteUserModal(null)}
+            >
+              <span className="modal-close-icon">×</span>
+            </button>
+
+
+            <div className="ticket-modal-header">
+              <div>
+                <h3>Delete account?</h3>
+                <p>
+                  This will permanently delete {deleteUserModal.name}'s account and
+                  related data.
+                </p>
+              </div>
+            </div>
+
+
+            <p className="modal-helper-text">
+              This action cannot be undone.
+            </p>
+
+
+            <div className="ticket-actions modal-actions">
+              <button
+                className="dashboard-button danger"
+                type="button"
+                onClick={handleDeleteUser}
+              >
+                Delete account
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {deleteBusinessModal && (
+        <div className="modal-overlay">
+          <div className="ticket-modal">
+            <button
+              className="modal-close-button"
+              type="button"
+              onClick={() => setDeleteBusinessModal(null)}
+            >
+              <span className="modal-close-icon">×</span>
+            </button>
+
+
+            <div className="ticket-modal-header">
+              <div>
+                <h3>Delete business?</h3>
+                <p>
+                  This will permanently delete {deleteBusinessModal.name}, its business
+                  accounts and related data.
+                </p>
+              </div>
+            </div>
+
+
+            <p className="modal-helper-text">
+              This action cannot be undone.
+            </p>
+
+
+            <div className="ticket-actions modal-actions">
+              <button
+                className="dashboard-button danger"
+                type="button"
+                onClick={handleDeleteBusiness}
+              >
+                Delete business
               </button>
             </div>
           </div>

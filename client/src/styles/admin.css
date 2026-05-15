@@ -287,3 +287,7 @@
 .admin-clickable-row:hover {
   background: var(--accent-bg);
 }
+
+.admin-modal-actions {
+  justify-content: space-between;
+}
