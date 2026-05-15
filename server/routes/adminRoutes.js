@@ -7,6 +7,7 @@ const { verifyAdmin } = require("../middleware/adminMiddleware");
 
 router.get("/stats", verifyToken, verifyAdmin, adminController.getAdminStats);
 router.get("/users", verifyToken, verifyAdmin, adminController.getAdminUsers);
+router.post("/users", verifyToken, verifyAdmin, adminController.createAdminUser);
 router.get("/businesses", verifyToken, verifyAdmin, adminController.getAdminBusinesses);
 router.get("/tickets", verifyToken, verifyAdmin, adminController.getAdminTickets);
 

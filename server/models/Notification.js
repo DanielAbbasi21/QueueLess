@@ -26,7 +26,8 @@ const NotificationSchema = new mongoose.Schema({
       "ticket_done",
       "customer_warned",
       "customer_blocked",
-      "customer_unblocked"
+      "customer_unblocked",
+      "account_created"
     ],
     required: true,
   },

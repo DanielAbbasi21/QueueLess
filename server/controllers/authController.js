@@ -59,6 +59,13 @@ exports.register = async (req, res) => {
       }
     }
 
+    await Notification.create({
+      user: user._id,
+      business: userRole === "business" ? businessId : null,
+      type: "account_created",
+      message: `Welcome to QueueLess, ${user.name}! Your ${userRole} account has been created successfully.`,
+    });
+
     const user = await User.create({
       name,
       email,

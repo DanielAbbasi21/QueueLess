@@ -21,7 +21,7 @@ function App() {
   const [showAboutModal, setShowAboutModal] = useState(false);
 
   const fetchUnreadCount = async () => {
-  if (!user || user.role !== "customer") return;
+  if (!user || !["customer", "business"].includes(user.role)) return;
 
   const res = await getUnreadNotificationCount();
 
@@ -31,7 +31,7 @@ function App() {
 };
 
   useEffect(() => {
-    if (!user || user.role !== "customer") return;
+    if (!user || !["customer", "business"].includes(user.role)) return;
 
     fetchUnreadCount();
 
@@ -90,7 +90,7 @@ function App() {
             </>
           )}
           
-          {user.role === "customer" && (
+          {["customer", "business"].includes(user.role) && (
             <button
               className={`nav-button ${page === "inbox" ? "active" : ""}`}
               onClick={() => setPage("inbox")}
@@ -116,7 +116,7 @@ function App() {
 
         {page === "history" && user.role !== "admin" && <History user={user} />}
 
-        {page === "inbox" && user.role === "customer" && <Inbox />}
+        {page === "inbox" && ["customer", "business"].includes(user.role) && <Inbox />}
 
         {page === "dashboard" && user.role === "customer" && <Customer />}
 

@@ -2,9 +2,9 @@ const Notification = require("../models/Notification");
 
 exports.getMyNotifications = async (req, res) => {
   try {
-    if (req.user.role !== "customer") {
+    if (!["customer", "business"].includes(req.user.role)) {
       return res.status(403).json({
-        error: "Only customers can access their notifications",
+        error: "Only customers and businesses can access their notifications",
       });
     }
 
@@ -26,9 +26,9 @@ exports.getMyNotifications = async (req, res) => {
 
 exports.markAsRead = async (req, res) => {
   try {
-    if (req.user.role !== "customer") {
+    if (!["customer", "business"].includes(req.user.role)) {
       return res.status(403).json({
-        error: "Only customers can update their notifications",
+        error: "Only customers and businesses can update their notifications",
       });
     }
 
@@ -64,9 +64,9 @@ exports.markAsRead = async (req, res) => {
 
 exports.getUnreadCount = async (req, res) => {
   try {
-    if (req.user.role !== "customer") {
+    if (!["customer", "business"].includes(req.user.role)) {
       return res.status(403).json({
-        error: "Only customers can access notification count",
+        error: "Only customers and businesses can access their notifications",
       });
     }
 
@@ -78,7 +78,7 @@ exports.getUnreadCount = async (req, res) => {
     res.json({ count });
   } catch (err) {
     res.status(500).json({
-      error: "Failed to fetch unread notification count",
+      error: "Only customers and businesses can access notification count",
       details: err.message,
     });
   }
