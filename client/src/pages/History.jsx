@@ -54,13 +54,37 @@ function History({ user }) {
       ticket.status === "blocked"
   );
 
-  const ticketHistory =
+  const getHistoryDate = (ticket) => {
+    if (ticket.completed_at) return new Date(ticket.completed_at).getTime();
+    if (ticket.cancelled_at) return new Date(ticket.cancelled_at).getTime();
+    if (ticket.updatedAt) return new Date(ticket.updatedAt).getTime();
+    if (ticket.created_at) return new Date(ticket.created_at).getTime();
+
+    return 0;
+  };
+
+  const getCreatedDate = (ticket) => {
+  if (ticket.created_at) return new Date(ticket.created_at).getTime();
+
+  return 0;
+};
+
+  const ticketHistory = (
     historyStatusFilter === "all"
       ? allTicketHistory
       : allTicketHistory.filter(
           (ticket) => ticket.status === historyStatusFilter
-        );
+        )
+  ).sort((a, b) => {
+    const historyDateDifference = getHistoryDate(b) - getHistoryDate(a);
 
+    if (historyDateDifference !== 0) {
+      return historyDateDifference;
+    }
+
+    return getCreatedDate(b) - getCreatedDate(a);
+  });
+  
   const handleUnblock = async (ticket) => {
     const res = await unblockCustomer({
       customer: ticket.user?._id,
